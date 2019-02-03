@@ -37,8 +37,7 @@ uses
   Spring,
   Spring.Collections,
   Spring.Data.ObjectDataSet,
-  Spring.Collections.Extensions,
-  Plus.Vcl.Timer;
+  Spring.Collections.Extensions;
 
 type
   TEnumerableHelper = class helper for TEnumerable
