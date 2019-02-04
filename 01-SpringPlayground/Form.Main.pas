@@ -16,11 +16,15 @@ type
     ActionList1: TActionList;
     actListAndSelectMany: TAction;
     actTObjectDataSet: TAction;
-    Action3: TAction;
+    actLoggerDemo: TAction;
     PageControl1: TPageControl;
+    Action1: TAction;
+    Action2: TAction;
     procedure actListAndSelectManyExecute(Sender: TObject);
     procedure actTObjectDataSetExecute(Sender: TObject);
-    procedure Action3Execute(Sender: TObject);
+    procedure actLoggerDemoExecute(Sender: TObject);
+    procedure Action1Execute(Sender: TObject);
+    procedure Action2Execute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     PageControlFactory: TPageControlFactory;
@@ -38,7 +42,15 @@ uses
   Spring,
   Spring.Collections,
   Spring.Data.ObjectDataSet,
-  Spring.Collections.Extensions, Frame.ArticlesGrid;
+  Spring.Collections.Extensions,
+
+  Spring.Logging,
+  Spring.Logging.Loggers,
+  Spring.Logging.Appenders,
+  Spring.Logging.Appenders.Base,
+  Spring.Logging.Controller,
+
+  Frame.ArticlesGrid;
 
 type
   TEnumerableHelper = class helper for TEnumerable
@@ -125,7 +137,54 @@ begin
     end);
 end;
 
-procedure TForm1.Action3Execute(Sender: TObject);
+procedure TForm1.actLoggerDemoExecute(Sender: TObject);
+var
+  Controller: ILoggerController;
+  logger: ILogger;
+  appender: ILogAppender;
+  Exception1: EAbort;
+  sl: TStringList;
+begin
+  // -----------------------------------------------------------------------
+  // More info about Spring4D and SpringLoggers:
+  // https://groups.google.com/forum/#!topic/spring4d/0E6GX-cfVrU
+  // -----------------------------------------------------------------------
+  // TODO: Prepare example with TLoggingConfigurationBuilder and configuration
+  // TLoggingConfiguration.LoadFromString - using Spring Container
+  // -----------------------------------------------------------------------
+  Controller := TLoggerController.Create;
+  logger := TLogger.Create(Controller);
+  appender := TFileLogAppender.Create;
+  (appender as ILoggerProperties).Levels := [TLogLevel.Warn, TLogLevel.Info,
+    TLogLevel.Text, TLogLevel.Fatal];
+  (appender as TFileLogAppender).FileName := '..\..\spring4d.txt';
+  Controller.AddAppender(appender);
+  logger.Enter(Self.ClassType, 'actLoggerDemoExecute');
+  logger.Log('first message');
+  logger.Warn('first WARN message');
+  Exception1 := EAbort.Create('');
+  logger.Error('Error ... (not sent to appender)', Exception1);
+  Exception1.Free;
+  sl := TStringList.Create;
+  try
+    try
+      sl[1] := 'abc';
+    except
+      on e: EStringListError do
+        logger.Fatal(e.Message, e);
+    end;
+  finally
+    sl.Free;
+  end;
+  logger.Leave(Self.ClassType, 'actLoggerDemoExecute');
+end;
+
+procedure TForm1.Action1Execute(Sender: TObject);
+begin
+  // TODO:
+end;
+
+procedure TForm1.Action2Execute(Sender: TObject);
 begin
   // TODO:
 end;
@@ -137,7 +196,7 @@ var
   aParent: TWinControl;
   aActionList: TActionList;
 begin
-  ReportMemoryLeaksOnShutdown := True;
+  ReportMemoryLeaksOnShutdown := true;
   // ------------------------------------------------------------
   PageControlFactory := TPageControlFactory.Create(Self);
   PageControlFactory.PageControl := PageControl1;

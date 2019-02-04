@@ -1,0 +1,7 @@
+21:36:47:898: [INFO ] Entering: Form.Main.TForm1.actLoggerDemoExecute
+21:36:47:898: [INFO ] first message
+21:36:47:898: [WARN ] first WARN message
+21:36:47:898: [FATAL] List index out of bounds (1): Exception EStringListError in module VclSpringPlayground.exe at 000B607C.
+List index out of bounds (1).
+
+21:36:47:899: [INFO ] Leaving: Form.Main.TForm1.actLoggerDemoExecute

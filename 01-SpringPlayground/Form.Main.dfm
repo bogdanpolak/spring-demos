@@ -23,7 +23,6 @@ object Form1: TForm1
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
-    ExplicitHeight = 421
   end
   object PageControl1: TPageControl
     AlignWithMargins = True
@@ -44,9 +43,17 @@ object Form1: TForm1
       Caption = 'actTObjectDataSet'
       OnExecute = actTObjectDataSetExecute
     end
-    object Action3: TAction
-      Caption = 'Action3'
-      OnExecute = Action3Execute
+    object actLoggerDemo: TAction
+      Caption = 'actLoggerDemo'
+      OnExecute = actLoggerDemoExecute
+    end
+    object Action1: TAction
+      Caption = 'Action1'
+      OnExecute = Action1Execute
+    end
+    object Action2: TAction
+      Caption = 'Action2'
+      OnExecute = Action2Execute
     end
   end
 end
