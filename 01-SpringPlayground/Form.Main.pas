@@ -47,7 +47,6 @@ uses
   Spring.Logging,
   Spring.Logging.Loggers,
   Spring.Logging.Appenders,
-  Spring.Logging.Appenders.Base,
   Spring.Logging.Controller,
 
   Frame.ArticlesGrid;
@@ -140,11 +139,38 @@ end;
 procedure TForm1.actLoggerDemoExecute(Sender: TObject);
 var
   Controller: ILoggerController;
-  logger: ILogger;
-  appender: ILogAppender;
+  Logger: ILogger;
+  Appender: ILogAppender;
   Exception1: EAbort;
   sl: TStringList;
 begin
+  Controller := Spring.Logging.Controller.TLoggerController.Create;
+  Logger := Spring.Logging.Loggers.TLogger.Create(Controller);
+  Appender := Spring.Logging.Appenders.TFileLogAppender.Create;
+  with Appender as TFileLogAppender do
+  begin
+    Levels := [TLogLevel.Warn, TLogLevel.Info, TLogLevel.Text, TLogLevel.Fatal];
+    FileName := '..\..\spring4d.txt';
+  end;
+  Controller.AddAppender(Appender);
+  Logger.Enter(Self.ClassType, 'actLoggerDemoExecute');
+  Logger.Log('first message');
+  Logger.Warn('first WARN message');
+  Exception1 := EAbort.Create('');
+  Logger.Error('Error ... (not sent to appender)', Exception1);
+  Exception1.Free;
+  sl := TStringList.Create;
+  try
+    try
+      sl[1] := 'abc';
+    except
+      on e: EStringListError do
+        Logger.Fatal(e.Message, e);
+    end;
+  finally
+    sl.Free;
+  end;
+  Logger.Leave(Self.ClassType, 'actLoggerDemoExecute');
   // -----------------------------------------------------------------------
   // More info about Spring4D and SpringLoggers:
   // https://groups.google.com/forum/#!topic/spring4d/0E6GX-cfVrU
@@ -157,31 +183,6 @@ begin
   // Subject: Clearing the log file
   // * between app restarts the logfile is cleared
   // -----------------------------------------------------------------------
-  Controller := TLoggerController.Create;
-  logger := TLogger.Create(Controller);
-  appender := TFileLogAppender.Create;
-  (appender as ILoggerProperties).Levels := [TLogLevel.Warn, TLogLevel.Info,
-    TLogLevel.Text, TLogLevel.Fatal];
-  (appender as TFileLogAppender).FileName := '..\..\spring4d.txt';
-  Controller.AddAppender(appender);
-  logger.Enter(Self.ClassType, 'actLoggerDemoExecute');
-  logger.Log('first message');
-  logger.Warn('first WARN message');
-  Exception1 := EAbort.Create('');
-  logger.Error('Error ... (not sent to appender)', Exception1);
-  Exception1.Free;
-  sl := TStringList.Create;
-  try
-    try
-      sl[1] := 'abc';
-    except
-      on e: EStringListError do
-        logger.Fatal(e.Message, e);
-    end;
-  finally
-    sl.Free;
-  end;
-  logger.Leave(Self.ClassType, 'actLoggerDemoExecute');
 end;
 
 procedure TForm1.Action1Execute(Sender: TObject);
