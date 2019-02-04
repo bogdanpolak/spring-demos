@@ -152,6 +152,11 @@ begin
   // TODO: Prepare example with TLoggingConfigurationBuilder and configuration
   // TLoggingConfiguration.LoadFromString - using Spring Container
   // -----------------------------------------------------------------------
+  // Loger functionality:
+  // https://stackoverflow.com/questions/43150531/logger-implementation-to-use-in-spring4d
+  // Subject: Clearing the log file
+  // * between app restarts the logfile is cleared
+  // -----------------------------------------------------------------------
   Controller := TLoggerController.Create;
   logger := TLogger.Create(Controller);
   appender := TFileLogAppender.Create;
