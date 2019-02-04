@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 427
-  ClientWidth = 695
+  ClientHeight = 435
+  ClientWidth = 751
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,10 +19,19 @@ object Form1: TForm1
     Left = 3
     Top = 3
     Width = 190
-    Height = 421
+    Height = 429
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
+    ExplicitHeight = 421
+  end
+  object PageControl1: TPageControl
+    AlignWithMargins = True
+    Left = 224
+    Top = 192
+    Width = 289
+    Height = 193
+    TabOrder = 1
   end
   object ActionList1: TActionList
     Left = 224

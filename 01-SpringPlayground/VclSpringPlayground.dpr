@@ -2,7 +2,10 @@ program VclSpringPlayground;
 
 uses
   Vcl.Forms,
-  Form.Main in 'Form.Main.pas' {Form1};
+  Form.Main in 'Form.Main.pas' {Form1},
+  Plus.Vcl.PageControlFactory in 'Plus.Vcl.PageControlFactory.pas',
+  Frame.ArticlesGrid in 'Frame.ArticlesGrid.pas' {FrameArticlesGrid: TFrame},
+  Helper.TDBGrid in '..\..\internalBSC\src\helpers\Helper.TDBGrid.pas';
 
 {$R *.res}
 

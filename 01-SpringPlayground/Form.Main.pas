@@ -3,10 +3,12 @@ unit Form.Main;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Actions, Vcl.ActnList,
-  Vcl.StdCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList,
+  Vcl.StdCtrls,
+  Data.DB,
+  Plus.Vcl.PageControlFactory, Vcl.ComCtrls;
 
 type
   TForm1 = class(TForm)
@@ -15,15 +17,14 @@ type
     actListAndSelectMany: TAction;
     actTObjectDataSet: TAction;
     Action3: TAction;
+    PageControl1: TPageControl;
     procedure actListAndSelectManyExecute(Sender: TObject);
     procedure actTObjectDataSetExecute(Sender: TObject);
     procedure Action3Execute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    DBGridArticles: TDBGrid;
-    { Private declarations }
+    PageControlFactory: TPageControlFactory;
   public
-    { Public declarations }
   end;
 
 var
@@ -37,7 +38,7 @@ uses
   Spring,
   Spring.Collections,
   Spring.Data.ObjectDataSet,
-  Spring.Collections.Extensions;
+  Spring.Collections.Extensions, Frame.ArticlesGrid;
 
 type
   TEnumerableHelper = class helper for TEnumerable
@@ -84,43 +85,17 @@ begin
   actListAndSelectMany.Caption := IntegerJoin(',', Concated);
 end;
 
-type
-  TArticle = class
-  private
-    FID: Integer;
-    FDesignation: string;
-  public
-    constructor Create(Id: Integer; const Designation: string);
-    property Id: Integer read FID write FID;
-    property Designation: string read FDesignation write FDesignation;
-  end;
-  { TArticle }
-
-constructor TArticle.Create(Id: Integer; const Designation: string);
-begin
-  FID := Id;
-  FDesignation := Designation;
-end;
-
 procedure TForm1.actTObjectDataSetExecute(Sender: TObject);
 var
   Articles: IList<TArticle>;
   ArticlesDataset: TObjectDataSet;
   fldId: TIntegerField;
   fldDesignation: TStringField;
+  aFrame: TFrameArticlesGrid;
 begin
-  Articles := TCollections.CreateList<TArticle>(true);
-  Articles.add(TArticle.Create(1, 'Article 1'));
-  Articles.add(TArticle.Create(2, 'Article 2'));
-  Articles.add(TArticle.Create(3, 'Article 3'));
-
-  if Assigned(DBGridArticles) then
-    DBGridArticles.Free;
-
-  DBGridArticles := TDBGrid.Create(Self);
-
-  ArticlesDataset := TObjectDataSet.Create(DBGridArticles);
-  ArticlesDataset.DataList := Articles as IObjectList;
+  aFrame := PageControlFactory.CreateFrame<TFrameArticlesGrid>
+    ('Articles - Object list in a TDataSet');
+  ArticlesDataset := TObjectDataSet.Create(aFrame);
   fldId := TIntegerField.Create(ArticlesDataset);
   fldId.FieldKind := fkData;
   fldId.Name := 'fid';
@@ -131,13 +106,23 @@ begin
   fldDesignation.FieldKind := fkData;
   fldDesignation.FieldName := 'Designation';
   fldDesignation.Dataset := ArticlesDataset;
+
+  Articles := TCollections.CreateList<TArticle>(true);
+  Articles.add(TArticle.Create(1, 'Article 1'));
+  Articles.add(TArticle.Create(12945,
+    'How to Unlock Your Hidden Creative Genius'));
+  Articles.add(TArticle.Create(2, 'Article 2'));
+  Articles.add(TArticle.Create(3, 'Article 3'));
+  ArticlesDataset.DataList := Articles as IObjectList;
   ArticlesDataset.Open;
 
-  DBGridArticles.DataSource := TDataSource.Create(DBGridArticles);
-  DBGridArticles.DataSource.Dataset := ArticlesDataset;
-  DBGridArticles.AlignWithMargins := true;
-  DBGridArticles.Align := alClient;
-  DBGridArticles.Parent := Self;
+  aFrame.ArticleList := Articles;
+  aFrame.DataSource1.Dataset := ArticlesDataset;
+  aFrame.OnCloseFrame := (
+    procedure(Sender: TFrame)
+    begin
+      (Sender.Owner as TTabSheet).Free;
+    end);
 end;
 
 procedure TForm1.Action3Execute(Sender: TObject);
@@ -152,6 +137,12 @@ var
   aParent: TWinControl;
   aActionList: TActionList;
 begin
+  ReportMemoryLeaksOnShutdown := True;
+  // ------------------------------------------------------------
+  PageControlFactory := TPageControlFactory.Create(Self);
+  PageControlFactory.PageControl := PageControl1;
+  PageControl1.Align := alClient;
+  // ------------------------------------------------------------
   aParent := GroupBox1;
   aActionList := ActionList1;
   for i := 0 to aActionList.ActionCount - 1 do
@@ -165,6 +156,7 @@ begin
       Parent := aParent;
     end;
   end;
+  // ------------------------------------------------------------
 end;
 
 end.
