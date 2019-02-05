@@ -4,10 +4,11 @@ interface
 
 uses
   System.Classes,
+  Vcl.ActnList,
   System.Actions;
 
 type
-  TWorkAction = class (TContainedAction)
+  TWorkAction = class (TAction)
   private
     procedure EventOnExecute (Sender: TObject);
   protected
