@@ -54,11 +54,6 @@ uses
   Frame.ArticlesGrid;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var
-  i: Integer;
-  aAction: TContainedAction;
-  aParent: TWinControl;
-  aActionList: TActionList;
 begin
   ReportMemoryLeaksOnShutdown := true;
   // ------------------------------------------------------------
@@ -67,9 +62,8 @@ begin
   PageControl1.Align := alClient;
   // ------------------------------------------------------------
   ActionGuiBuilder := TActionGuiBuilder.Create(Self);
-  ActionGuiBuilder.SetActions(ActionList1);
-  // ActionGuiBuilder.SetActions([actListAndSelectMany, actTObjectDataSet,
-  //  actLoggerDemo]);
+  ActionGuiBuilder.AddActions([actListAndSelectMany, actTObjectDataSet,
+    actLoggerDemo]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
 end;

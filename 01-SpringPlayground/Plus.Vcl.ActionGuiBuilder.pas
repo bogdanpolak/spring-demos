@@ -21,8 +21,8 @@ type
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
-    procedure SetActions(aActions: TActionsArray) overload;
-    procedure SetActions(aActionList: TActionList) overload;
+    procedure AddActions(aActions: TActionsArray) overload;
+    procedure AddActions(aActionList: TActionList) overload;
     procedure BuildButtons(aParent: TWinControl);
     class procedure BuildButtonsOnActionList (const aParent: TWinControl; const aActionList: TActionList);
   end;
@@ -37,7 +37,7 @@ resourcestring
   SActionListIsRequired = 'Action list is required. Please provide it' +
     ' through TActionGuiBuilder.SetActions method';
 
-  { TActionGuiBuilder }
+{ TActionGuiBuilder }
 
 constructor TActionGuiBuilder.Create(aOwner: TComponent);
 begin
@@ -51,7 +51,7 @@ begin
   inherited;
 end;
 
-procedure TActionGuiBuilder.SetActions(aActions: TActionsArray);
+procedure TActionGuiBuilder.AddActions(aActions: TActionsArray);
 var
   i: Integer;
 begin
@@ -61,7 +61,7 @@ begin
     FActions[i] := aActions[i];
 end;
 
-procedure TActionGuiBuilder.SetActions(aActionList: TActionList);
+procedure TActionGuiBuilder.AddActions(aActionList: TActionList);
 var
   i: Integer;
 begin
@@ -122,7 +122,7 @@ var
 begin
   Builder := TActionGuiBuilder.Create(nil);
   try
-    Builder.SetActions(aActionList);
+    Builder.AddActions(aActionList);
     Builder.BuildButtons(aParent);
   finally
     Builder.Free;
