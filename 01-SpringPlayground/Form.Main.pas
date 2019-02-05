@@ -20,12 +20,12 @@ type
     PageControl1: TPageControl;
     Action1: TAction;
     Action2: TAction;
+    procedure FormCreate(Sender: TObject);
     procedure actListAndSelectManyExecute(Sender: TObject);
     procedure actTObjectDataSetExecute(Sender: TObject);
     procedure actLoggerDemoExecute(Sender: TObject);
     procedure Action1Execute(Sender: TObject);
     procedure Action2Execute(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     PageControlFactory: TPageControlFactory;
   public
@@ -50,6 +50,44 @@ uses
   Spring.Logging.Controller,
 
   Frame.ArticlesGrid;
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  i: Integer;
+  aAction: TContainedAction;
+  aParent: TWinControl;
+  aActionList: TActionList;
+begin
+  ReportMemoryLeaksOnShutdown := true;
+  // ------------------------------------------------------------
+  PageControlFactory := TPageControlFactory.Create(Self);
+  PageControlFactory.PageControl := PageControl1;
+  PageControl1.Align := alClient;
+  // ------------------------------------------------------------
+  aParent := GroupBox1;
+  aActionList := ActionList1;
+  for i := 0 to aActionList.ActionCount - 1 do
+  begin
+    aAction := aActionList.Actions[i];
+    with TButton.Create(Self) do
+    begin
+      Action := aAction;
+      AlignWithMargins := true;
+      Align := alTop;
+      Parent := aParent;
+    end;
+  end;
+  // ------------------------------------------------------------
+end;
+
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Demo: Spring4D List manipulation, using TSelectManyIterator
+// * IList<Integer>
+// * OuterList: IList<IEnumerable<Integer>>
+// * TEnumerableHelper.SelectMany<Integer>
+// ------------------------------------------------------------------------
 
 type
   TEnumerableHelper = class helper for TEnumerable
@@ -96,6 +134,16 @@ begin
   actListAndSelectMany.Caption := IntegerJoin(',', Concated);
 end;
 
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Demo: IList<TArticle> ==> TObjectDataSet
+//   * using and managing TObjectDataSet component
+// used in this demo:
+//   * TPageControlFactory component
+//   * THelperDBGrid.AutoSizeColumns
+// ------------------------------------------------------------------------
+
 procedure TForm1.actTObjectDataSetExecute(Sender: TObject);
 var
   Articles: IList<TArticle>;
@@ -136,6 +184,25 @@ begin
     end);
 end;
 
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Demo: Simple construction of the ILogger interface
+//   * TLoggerController as ILoggerController
+//   * TFileLogAppender as ILogAppender
+// -----------------------------------------------------------------------
+// More info about Spring4D logging system and better way of usint loggers:
+//   * https://groups.google.com/forum/#!topic/spring4d/0E6GX-cfVrU
+//   * TLoggingConfiguration.LoadFromString - using Spring Container
+// TODO: Prepare example with TLoggingConfigurationBuilder and configuration
+// -----------------------------------------------------------------------
+// Loger functionality comments:
+// Subject: Clearing the log file
+//   * The log file is cleared between an app restarts
+//   * https://stackoverflow.com/questions/43150531/logger-implementation-to-use-in-spring4d
+// -----------------------------------------------------------------------
+// ------------------------------------------------------------------------
+
 procedure TForm1.actLoggerDemoExecute(Sender: TObject);
 var
   Controller: ILoggerController;
@@ -144,6 +211,7 @@ var
   Exception1: EAbort;
   sl: TStringList;
 begin
+  // --------------------------------------------------------------
   Controller := Spring.Logging.Controller.TLoggerController.Create;
   Logger := Spring.Logging.Loggers.TLogger.Create(Controller);
   Appender := Spring.Logging.Appenders.TFileLogAppender.Create;
@@ -153,6 +221,7 @@ begin
     FileName := '..\..\spring4d.txt';
   end;
   Controller.AddAppender(Appender);
+  // --------------------------------------------------------------
   Logger.Enter(Self.ClassType, 'actLoggerDemoExecute');
   Logger.Log('first message');
   Logger.Warn('first WARN message');
@@ -171,57 +240,29 @@ begin
     sl.Free;
   end;
   Logger.Leave(Self.ClassType, 'actLoggerDemoExecute');
-  // -----------------------------------------------------------------------
-  // More info about Spring4D and SpringLoggers:
-  // https://groups.google.com/forum/#!topic/spring4d/0E6GX-cfVrU
-  // -----------------------------------------------------------------------
-  // TODO: Prepare example with TLoggingConfigurationBuilder and configuration
-  // TLoggingConfiguration.LoadFromString - using Spring Container
-  // -----------------------------------------------------------------------
-  // Loger functionality:
-  // https://stackoverflow.com/questions/43150531/logger-implementation-to-use-in-spring4d
-  // Subject: Clearing the log file
-  // * between app restarts the logfile is cleared
-  // -----------------------------------------------------------------------
+  // --------------------------------------------------------------
 end;
+
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Demo:
+// ------------------------------------------------------------------------
 
 procedure TForm1.Action1Execute(Sender: TObject);
 begin
   // TODO:
 end;
 
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Demo:
+// ------------------------------------------------------------------------
+
 procedure TForm1.Action2Execute(Sender: TObject);
 begin
   // TODO:
-end;
-
-procedure TForm1.FormCreate(Sender: TObject);
-var
-  i: Integer;
-  aAction: TContainedAction;
-  aParent: TWinControl;
-  aActionList: TActionList;
-begin
-  ReportMemoryLeaksOnShutdown := true;
-  // ------------------------------------------------------------
-  PageControlFactory := TPageControlFactory.Create(Self);
-  PageControlFactory.PageControl := PageControl1;
-  PageControl1.Align := alClient;
-  // ------------------------------------------------------------
-  aParent := GroupBox1;
-  aActionList := ActionList1;
-  for i := 0 to aActionList.ActionCount - 1 do
-  begin
-    aAction := aActionList.Actions[i];
-    with TButton.Create(Self) do
-    begin
-      Action := aAction;
-      AlignWithMargins := true;
-      Align := alTop;
-      Parent := aParent;
-    end;
-  end;
-  // ------------------------------------------------------------
 end;
 
 end.
