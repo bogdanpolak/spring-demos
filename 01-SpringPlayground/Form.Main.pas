@@ -9,7 +9,7 @@ uses
   Vcl.StdCtrls, Vcl.ComCtrls,
   Data.DB,
   Plus.Vcl.PageControlFactory,
-  Plus.Vcl.ActionGuiBuilder;
+  Plus.Vcl.ActionGuiBuilder, Action.DemoSpring.TEnum;
 
 type
   TForm1 = class(TForm)
@@ -30,6 +30,7 @@ type
   private
     PageControlFactory: TPageControlFactory;
     ActionGuiBuilder: TActionGuiBuilder;
+    actDemoSpringTEnum: TActionDemoSpringTEnum;
   public
   end;
 
@@ -61,9 +62,11 @@ begin
   PageControlFactory.PageControl := PageControl1;
   PageControl1.Align := alClient;
   // ------------------------------------------------------------
+  actDemoSpringTEnum := TActionDemoSpringTEnum.Create(Self);
+  // ------------------------------------------------------------
   ActionGuiBuilder := TActionGuiBuilder.Create(Self);
   ActionGuiBuilder.AddActions([actListAndSelectMany, actTObjectDataSet,
-    actLoggerDemo]);
+    actLoggerDemo, actDemoSpringTEnum]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
 end;
