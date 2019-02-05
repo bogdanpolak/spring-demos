@@ -6,9 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList,
-  Vcl.StdCtrls,
+  Vcl.StdCtrls, Vcl.ComCtrls,
   Data.DB,
-  Plus.Vcl.PageControlFactory, Vcl.ComCtrls;
+  Plus.Vcl.PageControlFactory,
+  Plus.Vcl.ActionGuiBuilder;
 
 type
   TForm1 = class(TForm)
@@ -28,6 +29,7 @@ type
     procedure Action2Execute(Sender: TObject);
   private
     PageControlFactory: TPageControlFactory;
+    ActionGuiBuilder: TActionGuiBuilder;
   public
   end;
 
@@ -64,19 +66,11 @@ begin
   PageControlFactory.PageControl := PageControl1;
   PageControl1.Align := alClient;
   // ------------------------------------------------------------
-  aParent := GroupBox1;
-  aActionList := ActionList1;
-  for i := 0 to aActionList.ActionCount - 1 do
-  begin
-    aAction := aActionList.Actions[i];
-    with TButton.Create(Self) do
-    begin
-      Action := aAction;
-      AlignWithMargins := true;
-      Align := alTop;
-      Parent := aParent;
-    end;
-  end;
+  ActionGuiBuilder := TActionGuiBuilder.Create(Self);
+  ActionGuiBuilder.SetActions(ActionList1);
+  // ActionGuiBuilder.SetActions([actListAndSelectMany, actTObjectDataSet,
+  //  actLoggerDemo]);
+  ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
 end;
 
@@ -138,10 +132,10 @@ end;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // Demo: IList<TArticle> ==> TObjectDataSet
-//   * using and managing TObjectDataSet component
+// * using and managing TObjectDataSet component
 // used in this demo:
-//   * TPageControlFactory component
-//   * THelperDBGrid.AutoSizeColumns
+// * TPageControlFactory component
+// * THelperDBGrid.AutoSizeColumns
 // ------------------------------------------------------------------------
 
 procedure TForm1.actTObjectDataSetExecute(Sender: TObject);
@@ -188,18 +182,18 @@ end;
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // Demo: Simple construction of the ILogger interface
-//   * TLoggerController as ILoggerController
-//   * TFileLogAppender as ILogAppender
+// * TLoggerController as ILoggerController
+// * TFileLogAppender as ILogAppender
 // -----------------------------------------------------------------------
 // More info about Spring4D logging system and better way of usint loggers:
-//   * https://groups.google.com/forum/#!topic/spring4d/0E6GX-cfVrU
-//   * TLoggingConfiguration.LoadFromString - using Spring Container
+// * https://groups.google.com/forum/#!topic/spring4d/0E6GX-cfVrU
+// * TLoggingConfiguration.LoadFromString - using Spring Container
 // TODO: Prepare example with TLoggingConfigurationBuilder and configuration
 // -----------------------------------------------------------------------
 // Loger functionality comments:
 // Subject: Clearing the log file
-//   * The log file is cleared between an app restarts
-//   * https://stackoverflow.com/questions/43150531/logger-implementation-to-use-in-spring4d
+// * The log file is cleared between an app restarts
+// * https://stackoverflow.com/questions/43150531/logger-implementation-to-use-in-spring4d
 // -----------------------------------------------------------------------
 // ------------------------------------------------------------------------
 

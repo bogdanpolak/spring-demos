@@ -5,7 +5,8 @@ uses
   Form.Main in 'Form.Main.pas' {Form1},
   Plus.Vcl.PageControlFactory in 'Plus.Vcl.PageControlFactory.pas',
   Frame.ArticlesGrid in 'Frame.ArticlesGrid.pas' {FrameArticlesGrid: TFrame},
-  Helper.TDBGrid in 'Helper.TDBGrid.pas';
+  Helper.TDBGrid in 'Helper.TDBGrid.pas',
+  Plus.Vcl.ActionGuiBuilder in 'Plus.Vcl.ActionGuiBuilder.pas';
 
 {$R *.res}
 
