@@ -212,7 +212,7 @@ begin
   with Appender as TFileLogAppender do
   begin
     Levels := [TLogLevel.Warn, TLogLevel.Info, TLogLevel.Text, TLogLevel.Fatal];
-    FileName := '..\..\spring4d.txt';
+    FileName := 'spring4d.txt';
   end;
   Controller.AddAppender(Appender);
   // --------------------------------------------------------------
