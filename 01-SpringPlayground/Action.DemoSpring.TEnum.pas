@@ -4,14 +4,13 @@ interface
 
 uses
   System.Classes,
-  Plus.Vcl.WorkAction;
+  Plus.Vcl.DemoAction;
 
 type
-  TActionDemoSpringTEnum = class(TWorkAction)
+  TActionDemoSpringTEnum = class(TDemoAction)
   private
     procedure DoEnumerateNamesAndValues;
     procedure DoParseEnumValueFromNameAsString;
-    procedure ConsoleWrite(const s: string);
   protected
     procedure DoInitialiaze; override;
     procedure DoExecute; override;
@@ -22,18 +21,11 @@ implementation
 uses
   System.Types,
   System.SysUtils,
-  System.Messaging,
   Spring;
 
 procedure TActionDemoSpringTEnum.DoInitialiaze;
 begin
   Self.Caption := 'Demo Spring4D: Spring.TEnum';
-end;
-
-procedure TActionDemoSpringTEnum.ConsoleWrite(const s: string);
-begin
-  TMessageManager.DefaultManager.SendMessage(Self,
-    TMessage<UnicodeString>.Create(s), True);
 end;
 
 type
@@ -67,13 +59,12 @@ end;
 procedure TActionDemoSpringTEnum.DoParseEnumValueFromNameAsString;
 var
   aNumberEnum: TNumberEnum;
-  s: string;
 begin
   aNumberEnum := Spring.TEnum.Parse<TNumberEnum>( 'SeVeN' );
   if aNumberEnum = Seven then
     ConsoleWrite('[OK] Seven was properly parsed');
   try
-    aNumberEnum := Spring.TEnum.Parse<TNumberEnum>( 'Eleven' );
+    Spring.TEnum.Parse<TNumberEnum>( 'Eleven' );
   except on E: Spring.EFormatException do
     ConsoleWrite('[Exception] Eleven was not parsed. (EFormatException)')
   end;
