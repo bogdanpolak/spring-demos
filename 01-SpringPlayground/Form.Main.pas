@@ -58,9 +58,11 @@ uses
   // ----------------------------
   Action.DemoSpring.TEnum,
   Action.DemoSpring.Nullable,
+  Action.DemoSpring.Predicate,
   // ----------------------------
   Frame.ArticlesGrid,
-  Frame.Console;
+  Frame.Console,
+  Plus.Spring.EnumerableUtils;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -73,7 +75,7 @@ begin
   ActionGuiBuilder := TActionGuiBuilder.Create(Self);
   ActionGuiBuilder.AddActions([actListAndSelectMany, actTObjectDataSet,
     actLoggerDemo, TActionDemoSpringTEnum.Create(Self),
-    TActionDemoNullable.Create(Self)]);
+    TActionDemoNullable.Create(Self),TActionDemoPredicate.Create(Self)]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
   TMessageManager.DefaultManager.SubscribeToMessage(TMessage<UnicodeString>,
@@ -125,19 +127,6 @@ begin
     end);
 end;
 
-function IntegerJoin(const separator: string;
-const values: Spring.Collections.IEnumerable<Integer>): string; overload;
-var
-  e: Spring.Collections.IEnumerator<Integer>;
-begin
-  e := values.GetEnumerator;
-  if not e.MoveNext then
-    Exit('');
-  Result := e.Current.ToString;
-  while e.MoveNext do
-    Result := Result + separator + e.Current.ToString;
-end;
-
 procedure TForm1.actListAndSelectManyExecute(Sender: TObject);
 var
   InnerList1: IList<Integer>;
@@ -150,7 +139,7 @@ begin
   OuterList := TCollections.CreateList < IEnumerable < Integer >>
     ([InnerList1, InnerList2]);
   Concated := TEnumerable.SelectMany<Integer>(OuterList);
-  actListAndSelectMany.Caption := IntegerJoin(',', Concated);
+  actListAndSelectMany.Caption := TEnumerableUtils.Join(',', Concated);
 end;
 
 

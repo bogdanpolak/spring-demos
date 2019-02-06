@@ -10,7 +10,9 @@ uses
   Action.DemoSpring.TEnum in 'Action.DemoSpring.TEnum.pas',
   Frame.Console in 'Frame.Console.pas' {FrameConsole: TFrame},
   Plus.Vcl.DemoAction in 'Plus.Vcl.DemoAction.pas',
-  Action.DemoSpring.Nullable in 'Action.DemoSpring.Nullable.pas';
+  Action.DemoSpring.Predicate in 'Action.DemoSpring.Predicate.pas',
+  Action.DemoSpring.Nullable in 'Action.DemoSpring.Nullable.pas',
+  Plus.Spring.EnumerableUtils in 'Plus.Spring.EnumerableUtils.pas';
 
 {$R *.res}
 
