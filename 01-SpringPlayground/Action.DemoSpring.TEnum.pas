@@ -11,7 +11,7 @@ type
   private
     procedure DoEnumerateNamesAndValues;
     procedure DoParseEnumValueFromNameAsString;
-    procedure WriteLn(const s: string);
+    procedure ConsoleWrite(const s: string);
   protected
     procedure DoInitialiaze; override;
     procedure DoExecute; override;
@@ -28,6 +28,12 @@ uses
 procedure TActionDemoSpringTEnum.DoInitialiaze;
 begin
   Self.Caption := 'Demo Spring4D: Spring.TEnum';
+end;
+
+procedure TActionDemoSpringTEnum.ConsoleWrite(const s: string);
+begin
+  TMessageManager.DefaultManager.SendMessage(Self,
+    TMessage<UnicodeString>.Create(s), True);
 end;
 
 type
@@ -52,37 +58,38 @@ begin
     else
       StrValues := StrValues + ', ' + Val.ToString;
   end;
-  WriteLn('TEnum.GetNames<TNumberEnum>: [' + StrNames + ']');
-  WriteLn('TEnum.GetNames<TNumberEnum>: [' + StrValues + ']');
+  ConsoleWrite('Names = TEnum.GetNames<TNumberEnum>:');
+  ConsoleWrite('  (' + StrNames + ')');
+  ConsoleWrite('Values = TEnum.GetValues<TNumberEnum>:');
+  ConsoleWrite('  (' + StrValues + ')');
 end;
 
 procedure TActionDemoSpringTEnum.DoParseEnumValueFromNameAsString;
 var
-  NE: TNumberEnum;
+  aNumberEnum: TNumberEnum;
   s: string;
 begin
-  s := 'Seven';
-  NE := Spring.TEnum.Parse<TNumberEnum>(s);
-  if s = Spring.TEnum.GetName<TNumberEnum>(NE) then
-    WriteLn(s + ' was properly parsed as ' + TEnum.GetName<TNumberEnum>(NE))
-  else
-    WriteLn('The TEnum.Parse call failed');
-end;
-
-procedure TActionDemoSpringTEnum.WriteLn(const s: string);
-begin
-
+  aNumberEnum := Spring.TEnum.Parse<TNumberEnum>( 'SeVeN' );
+  if aNumberEnum = Seven then
+    ConsoleWrite('[OK] Seven was properly parsed');
+  try
+    aNumberEnum := Spring.TEnum.Parse<TNumberEnum>( 'Eleven' );
+  except on E: Spring.EFormatException do
+    ConsoleWrite('[Exception] Eleven was not parsed. (EFormatException)')
+  end;
 end;
 
 procedure TActionDemoSpringTEnum.DoExecute;
 begin
   // --------------------------------------------------------------------
+  ConsoleWrite('----------------------------------------');
+  ConsoleWrite('*** Spring TEnum Demo ***');
   if Spring.TEnum.IsValid<TNumberEnum>(Four) then
-    WriteLn(Spring.TEnum.GetName<TNumberEnum>(Four)+' is one of the enum value');
-  // --------------------------------------------------------------------
+    ConsoleWrite(Spring.TEnum.GetName<TNumberEnum>(Four) +
+      ' is one of the value');
   DoEnumerateNamesAndValues;
-  // --------------------------------------------------------------------
   DoParseEnumValueFromNameAsString;
+  ConsoleWrite('----------------------------------------');
 end;
 
 end.

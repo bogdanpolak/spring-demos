@@ -5,11 +5,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
+  System.Messaging,
+
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList,
   Vcl.StdCtrls, Vcl.ComCtrls,
   Data.DB,
   Plus.Vcl.PageControlFactory,
-  Plus.Vcl.ActionGuiBuilder, Action.DemoSpring.TEnum;
+  Plus.Vcl.ActionGuiBuilder;
 
 type
   TForm1 = class(TForm)
@@ -19,8 +21,6 @@ type
     actTObjectDataSet: TAction;
     actLoggerDemo: TAction;
     PageControl1: TPageControl;
-    Action1: TAction;
-    Action2: TAction;
     procedure FormCreate(Sender: TObject);
     procedure actListAndSelectManyExecute(Sender: TObject);
     procedure actTObjectDataSetExecute(Sender: TObject);
@@ -30,7 +30,13 @@ type
   private
     PageControlFactory: TPageControlFactory;
     ActionGuiBuilder: TActionGuiBuilder;
-    actDemoSpringTEnum: TActionDemoSpringTEnum;
+    // --------------------------------
+    actDemoSpringTEnum: TAction;
+    // --------------------------------
+    FrameConsole: TFrame;
+    // --------------------------------
+    procedure OnConsoleWriteMessage(const Sender: TObject;
+      const M: System.Messaging.TMessage);
   public
   end;
 
@@ -46,13 +52,16 @@ uses
   Spring.Collections,
   Spring.Data.ObjectDataSet,
   Spring.Collections.Extensions,
-
+  // ----------------------------
   Spring.Logging,
   Spring.Logging.Loggers,
   Spring.Logging.Appenders,
   Spring.Logging.Controller,
-
-  Frame.ArticlesGrid;
+  // ----------------------------
+  Action.DemoSpring.TEnum,
+  // ----------------------------
+  Frame.ArticlesGrid,
+  Frame.Console;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -69,6 +78,28 @@ begin
     actLoggerDemo, actDemoSpringTEnum]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
+  TMessageManager.DefaultManager.SubscribeToMessage(TMessage<UnicodeString>,
+    OnConsoleWriteMessage);
+end;
+
+procedure TForm1.OnConsoleWriteMessage(const Sender: TObject;
+  const M: System.Messaging.TMessage);
+var
+  frm: TFrameConsole;
+begin
+  if FrameConsole = nil then
+  begin
+    frm := PageControlFactory.CreateFrame<TFrameConsole>
+      ('Console write log');
+    frm.OnCloseFrame := (
+      procedure(Sender: TFrame)
+      begin
+        FrameConsole := nil;
+        (Sender.Owner as TTabSheet).Free;
+      end);
+    frm.DoConsoleWrite((M as TMessage<UnicodeString>).Value);
+    FrameConsole := frm;
+  end;
 end;
 
 
