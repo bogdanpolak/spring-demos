@@ -9,7 +9,8 @@ uses
   Plus.Vcl.ActionGuiBuilder in 'Plus.Vcl.ActionGuiBuilder.pas',
   Action.DemoSpring.TEnum in 'Action.DemoSpring.TEnum.pas',
   Frame.Console in 'Frame.Console.pas' {FrameConsole: TFrame},
-  Plus.Vcl.DemoAction in 'Plus.Vcl.DemoAction.pas';
+  Plus.Vcl.DemoAction in 'Plus.Vcl.DemoAction.pas',
+  Action.DemoSpring.Nullable in 'Action.DemoSpring.Nullable.pas';
 
 {$R *.res}
 

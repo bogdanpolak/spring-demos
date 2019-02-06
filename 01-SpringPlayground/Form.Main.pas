@@ -31,8 +31,6 @@ type
     PageControlFactory: TPageControlFactory;
     ActionGuiBuilder: TActionGuiBuilder;
     // --------------------------------
-    actDemoSpringTEnum: TAction;
-    // --------------------------------
     FrameConsole: TFrame;
     // --------------------------------
     procedure OnConsoleWriteMessage(const Sender: TObject;
@@ -59,6 +57,7 @@ uses
   Spring.Logging.Controller,
   // ----------------------------
   Action.DemoSpring.TEnum,
+  Action.DemoSpring.Nullable,
   // ----------------------------
   Frame.ArticlesGrid,
   Frame.Console;
@@ -71,11 +70,10 @@ begin
   PageControlFactory.PageControl := PageControl1;
   PageControl1.Align := alClient;
   // ------------------------------------------------------------
-  actDemoSpringTEnum := TActionDemoSpringTEnum.Create(Self);
-  // ------------------------------------------------------------
   ActionGuiBuilder := TActionGuiBuilder.Create(Self);
   ActionGuiBuilder.AddActions([actListAndSelectMany, actTObjectDataSet,
-    actLoggerDemo, actDemoSpringTEnum]);
+    actLoggerDemo, TActionDemoSpringTEnum.Create(Self),
+    TActionDemoNullable.Create(Self)]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
   TMessageManager.DefaultManager.SubscribeToMessage(TMessage<UnicodeString>,
@@ -89,8 +87,7 @@ var
 begin
   if FrameConsole = nil then
   begin
-    frm := PageControlFactory.CreateFrame<TFrameConsole>
-      ('Console write log');
+    frm := PageControlFactory.CreateFrame<TFrameConsole>('Console write log');
     frm.OnCloseFrame := (
       procedure(Sender: TFrame)
       begin
