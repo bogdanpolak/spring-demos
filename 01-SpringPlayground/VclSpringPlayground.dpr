@@ -6,7 +6,10 @@ uses
   Plus.Vcl.PageControlFactory in 'Plus.Vcl.PageControlFactory.pas',
   Frame.ArticlesGrid in 'Frame.ArticlesGrid.pas' {FrameArticlesGrid: TFrame},
   Helper.TDBGrid in 'Helper.TDBGrid.pas',
-  Plus.Vcl.ActionGuiBuilder in 'Plus.Vcl.ActionGuiBuilder.pas';
+  Plus.Vcl.ActionGuiBuilder in 'Plus.Vcl.ActionGuiBuilder.pas',
+  Plus.Vcl.WorkAction in 'Plus.Vcl.WorkAction.pas',
+  Action.DemoSpring.TEnum in 'Action.DemoSpring.TEnum.pas',
+  Frame.Console in 'Frame.Console.pas' {FrameConsole: TFrame};
 
 {$R *.res}
 

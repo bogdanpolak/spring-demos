@@ -47,13 +47,5 @@ object Form1: TForm1
       Caption = 'actLoggerDemo'
       OnExecute = actLoggerDemoExecute
     end
-    object Action1: TAction
-      Caption = 'Action1'
-      OnExecute = Action1Execute
-    end
-    object Action2: TAction
-      Caption = 'Action2'
-      OnExecute = Action2Execute
-    end
   end
 end
