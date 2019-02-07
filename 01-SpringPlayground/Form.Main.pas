@@ -62,7 +62,7 @@ uses
   // ----------------------------
   Frame.ArticlesGrid,
   Frame.Console,
-  Plus.Spring.EnumerableUtils;
+  Plus.Spring.EnumerableUtils, Action.Demo.CustomerCollection;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -76,7 +76,7 @@ begin
   ActionGuiBuilder.AddActions([actListAndSelectMany, actTObjectDataSet,
     actLoggerDemo, TActionDemoSpringTEnum.Create(Self),
     TActionDemoNullable.Create(Self),TActionDemoPredicate.Create(Self),
-    TActionDemoCollection.Create(Self)]);
+    TActionDemoCollection.Create(Self),TActionDemoCustomers.Create(Self)]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
   TMessageManager.DefaultManager.SubscribeToMessage(TMessage<UnicodeString>,
