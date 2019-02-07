@@ -13,7 +13,8 @@ uses
   Action.DemoSpring.Predicate in 'Action.DemoSpring.Predicate.pas',
   Action.DemoSpring.Nullable in 'Action.DemoSpring.Nullable.pas',
   Plus.Spring.EnumerableUtils in 'Plus.Spring.EnumerableUtils.pas',
-  Action.Demo.Collections in 'Action.Demo.Collections.pas';
+  Action.Demo.Collections in 'Action.Demo.Collections.pas',
+  Action.Demo.CustomerCollection in 'Action.Demo.CustomerCollection.pas';
 
 {$R *.res}
 
