@@ -29,6 +29,7 @@ implementation
 uses
   Spring,
   System.Generics.Defaults,
+  System.Hash,
   System.SysUtils;
 
 procedure TActionDemoCollection.DoInitialiaze;
@@ -189,11 +190,8 @@ begin
     function(const Pair: TIntegerStringPair): integer
     begin
       // Result := 0; // Pair.Values are ignored
-      // --
-      // Result := Length(Pair.Value);
-      // ---
-      Result := BobJenkinsHash(Pair.Value[1], Length(Pair.Value) *
-         SizeOf(Pair.Value[1]), 0);
+      // Result := Length(Pair.Value);  // Eqauls are with the same length
+      Result := System.Hash.THashBobJenkins.GetHashValue(Pair.Value);
     end);
   Set123Polish := TCollections.CreateSet<TIntegerStringPair>(PairComparer);
   Set123Polish.Add(TIntegerStringPair.Create(1, 'jeden'));
