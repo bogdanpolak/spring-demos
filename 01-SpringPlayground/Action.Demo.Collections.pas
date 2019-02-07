@@ -17,6 +17,7 @@ type
     procedure DoListOperationsDemo;
     procedure DoPairSelectionInList;
     procedure DoSpringSetDemo;
+    procedure DoSetEqualityComarerDemo;
   protected
     procedure DoInitialiaze; override;
     procedure DoExecute; override;
@@ -27,6 +28,7 @@ implementation
 
 uses
   Spring,
+  System.Generics.Defaults,
   System.SysUtils;
 
 procedure TActionDemoCollection.DoInitialiaze;
@@ -124,7 +126,7 @@ begin
   ConsoleWrite('ForEach(Action)');
   Action := procedure(const Pair: TIntegerStringPair)
     begin
-      ConsoleWrite('  Action :'+PairToString(Pair))
+      ConsoleWrite('  Action :' + PairToString(Pair))
     end;
   List.ForEach(Action);
 end;
@@ -156,29 +158,71 @@ end;
 procedure TActionDemoCollection.DoSpringSetDemo;
 var
   List: IList<TIntegerStringPair>;
-  List2and5: IList<TIntegerStringPair>;
-  PairSet: ISet<TIntegerStringPair>;
+  SetOfPair: ISet<TIntegerStringPair>;
   Enumerable: IEnumerable<TIntegerStringPair>;
-  IsSuperset: Boolean;
-  s: string;
 begin
   List := CreateDemoCollection;
-  PairSet := TCollections.CreateSet<TIntegerStringPair>(List);
+  SetOfPair := TCollections.CreateSet<TIntegerStringPair>(List);
   ConsoleWrite('CreateSet<TIntegerStringPair>(List)');
-  ConsoleWrite('  ' + PairsToString(PairSet));
-  Enumerable := PairSet.Shuffled;
+  ConsoleWrite('  ' + PairsToString(SetOfPair));
+  Enumerable := SetOfPair.Shuffled;
   ConsoleWrite('  Shuffled: ' + PairsToString(Enumerable));
-  Enumerable := PairSet.Shuffled;
+  Enumerable := SetOfPair.Shuffled;
   ConsoleWrite('  Shuffled: ' + PairsToString(Enumerable));
+end;
+
+procedure TActionDemoCollection.DoSetEqualityComarerDemo;
+var
+  PairComparer: IEqualityComparer<TIntegerStringPair>;
+  Set123Polish: ISet<TIntegerStringPair>;
+  Set2German: ISet<TIntegerStringPair>;
+  Set2Polish: ISet<TIntegerStringPair>;
+  IsSubsetGer: Boolean;
+  IsSubsetPol: Boolean;
+  Verb: string;
+begin
+  PairComparer := TDelegatedEqualityComparer<TIntegerStringPair>.Create(
+    function(const Left, Right: TIntegerStringPair): Boolean
+    begin
+      Result := Left.Key = Right.Key;
+    end,
+    function(const Pair: TIntegerStringPair): integer
+    begin
+      // Result := 0; // Pair.Values are ignored
+      // --
+      // Result := Length(Pair.Value);
+      // ---
+      Result := BobJenkinsHash(Pair.Value[1], Length(Pair.Value) *
+         SizeOf(Pair.Value[1]), 0);
+    end);
+  Set123Polish := TCollections.CreateSet<TIntegerStringPair>(PairComparer);
+  Set123Polish.Add(TIntegerStringPair.Create(1, 'jeden'));
+  Set123Polish.Add(TIntegerStringPair.Create(2, 'dwa'));
+  Set123Polish.Add(TIntegerStringPair.Create(3, 'trzy'));
+  Set2German := TCollections.CreateSet<TIntegerStringPair>(PairComparer);
+  Set2German.Add(TIntegerStringPair.Create(2, 'zwei'));
+  IsSubsetGer := Set2German.IsSubsetOf(Set123Polish);
+  Set2Polish := TCollections.CreateSet<TIntegerStringPair>(PairComparer);
+  Set2Polish.Add(TIntegerStringPair.Create(2, 'dwa'));
+  IsSubsetPol := Set2Polish.IsSubsetOf(Set123Polish);
+  ConsoleWrite('ISet.IsSubset, IEqualityComparer<TIntegerStringPair>');
+  ConsoleWrite('  Set123Polish: ' + PairsToString(Set123Polish));
+  ConsoleWrite('  Set2German: ' + PairsToString(Set2German));
+  ConsoleWrite('  Set2Polish: ' + PairsToString(Set2Polish));
+  Verb := IfThen(IsSubsetGer, 'is subset', 'isn''t subset');
+  ConsoleWrite('  * Set2German '+Verb+' of Set123Polish');
+  Verb := IfThen(IsSubsetPol, 'is subset', 'isn''t subset');
+  ConsoleWrite('  * Set2Polish '+Verb+' of Set123Polish');
 end;
 
 procedure TActionDemoCollection.DoExecute;
 begin
-  ConsoleWrite('----------------------------------------');
+  ConsoleWrite('---------------------------------------------------');
   ConsoleWrite('*** Spring4D.Base Collection Demo ***');
   DoListOperationsDemo;
   DoPairSelectionInList;
   DoSpringSetDemo;
+  DoSetEqualityComarerDemo;
 end;
 
 end.

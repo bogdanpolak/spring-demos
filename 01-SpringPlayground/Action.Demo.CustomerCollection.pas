@@ -17,7 +17,7 @@ type
     procedure SetSalary(const Value: integer);
   public
     constructor Create(aFirstName: string; aLastName: string; aSalary: integer);
-    function ToString: string;
+    function ToString: string; override;
     property FirstName: string read FFirstName write SetFirstName;
     property LastName: string read FLastName write SetLastName;
     property Salary: integer read FSalary write SetSalary;
@@ -104,15 +104,6 @@ var
 begin
   for Customer in custs do
     ConsoleWrite('  ' + Customer.ToString);
-end;
-
-function CompareBySalary(const Left, Right: TCustomer): integer;
-begin
-end;
-
-function CompareByName(const Left, Right: TCustomer): integer;
-begin
-  Result := CompareText(Left.LastName, Right.LastName);
 end;
 
 { TActionDemoCollection }
