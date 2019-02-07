@@ -11,7 +11,7 @@ uses
   Vcl.StdCtrls, Vcl.ComCtrls,
   Data.DB,
   Plus.Vcl.PageControlFactory,
-  Plus.Vcl.ActionGuiBuilder;
+  Plus.Vcl.ActionGuiBuilder, Action.Demo.Collections;
 
 type
   TForm1 = class(TForm)
@@ -75,7 +75,8 @@ begin
   ActionGuiBuilder := TActionGuiBuilder.Create(Self);
   ActionGuiBuilder.AddActions([actListAndSelectMany, actTObjectDataSet,
     actLoggerDemo, TActionDemoSpringTEnum.Create(Self),
-    TActionDemoNullable.Create(Self),TActionDemoPredicate.Create(Self)]);
+    TActionDemoNullable.Create(Self),TActionDemoPredicate.Create(Self),
+    TActionDemoCollection.Create(Self)]);
   ActionGuiBuilder.BuildButtons(GroupBox1);
   // ------------------------------------------------------------
   TMessageManager.DefaultManager.SubscribeToMessage(TMessage<UnicodeString>,
