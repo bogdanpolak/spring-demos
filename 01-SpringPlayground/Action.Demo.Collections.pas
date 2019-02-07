@@ -3,6 +3,7 @@ unit Action.Demo.Collections;
 interface
 
 uses
+  System.StrUtils,
   Generics.Collections,
   Spring.Collections,
   Plus.Vcl.DemoAction;
@@ -13,6 +14,9 @@ type
   TActionDemoCollection = class(TDemoAction)
   private
     function CreateDemoCollection: IList<TIntegerStringPair>;
+    procedure DoListOperationsDemo;
+    procedure DoPairSelectionInList;
+    procedure DoSpringSetDemo;
   protected
     procedure DoInitialiaze; override;
     procedure DoExecute; override;
@@ -70,17 +74,13 @@ begin
   Result := List_1_9;
 end;
 
-procedure TActionDemoCollection.DoExecute;
+procedure TActionDemoCollection.DoListOperationsDemo;
 var
   List: IList<TIntegerStringPair>;
   Predicate: Spring.TPredicate<TIntegerStringPair>;
   Enumerable: IEnumerable<TIntegerStringPair>;
   Action: TAction<TIntegerStringPair>;
-  PairFirst, PairLast, PairAt4, PairMin, PairMax: TIntegerStringPair;
 begin
-  ConsoleWrite('----------------------------------------');
-  ConsoleWrite('*** Spring4D.Base Collection Demo ***');
-  // ---
   List := CreateDemoCollection;
   ConsoleWrite('Create List:');
   ConsoleWrite('  ' + PairsToString(List));
@@ -121,27 +121,64 @@ begin
   ConsoleWrite('Reversed');
   ConsoleWrite('  ' + PairsToString(Enumerable));
   // ---
-  PairFirst := List.First;
-  PairLast := List.Last;
-  PairAt4 := List.ElementAt(4); // zero-based
-  PairMin := List.Min;
-  PairMax := List.Max;
-  ConsoleWrite('First: ' + PairToString(PairFirst));
-  ConsoleWrite('Last: ' + PairToString(PairFirst));
-  ConsoleWrite('ElementAt(4): ' + PairToString(PairAt4));
-  ConsoleWrite('Min: ' + PairToString(PairMin));
-  ConsoleWrite('Max: ' + PairToString(PairMax));
-  // ---
   ConsoleWrite('ForEach(Action)');
   Action := procedure(const Pair: TIntegerStringPair)
     begin
       ConsoleWrite('  Action :'+PairToString(Pair))
     end;
   List.ForEach(Action);
+end;
+
+procedure TActionDemoCollection.DoPairSelectionInList;
+var
+  List: IList<TIntegerStringPair>;
+  PairFirst, PairLast, PairAt4, PairMin, PairMax: TIntegerStringPair;
+  i: integer;
+begin
+  List := CreateDemoCollection;
+  PairFirst := List.First;
+  PairLast := List.Last;
+  PairAt4 := List.ElementAt(4); // zero-based
+  ConsoleWrite('First: ' + PairToString(PairFirst));
+  ConsoleWrite('Last: ' + PairToString(PairFirst));
+  ConsoleWrite('ElementAt(4): ' + PairToString(PairAt4));
   // ---
-  Enumerable := TCollections.CreateSet<TIntegerStringPair>(List);
+  for i := 0 to List.Count do
+    List.Exchange(random(List.Count), random(List.Count));
+  PairMin := List.Min;
+  PairMax := List.Max;
+  ConsoleWrite('Shuflle:');
+  ConsoleWrite('  ' + PairsToString(List));
+  ConsoleWrite('  Min: ' + PairToString(PairMin));
+  ConsoleWrite('  Max: ' + PairToString(PairMax));
+end;
+
+procedure TActionDemoCollection.DoSpringSetDemo;
+var
+  List: IList<TIntegerStringPair>;
+  List2and5: IList<TIntegerStringPair>;
+  PairSet: ISet<TIntegerStringPair>;
+  Enumerable: IEnumerable<TIntegerStringPair>;
+  IsSuperset: Boolean;
+  s: string;
+begin
+  List := CreateDemoCollection;
+  PairSet := TCollections.CreateSet<TIntegerStringPair>(List);
   ConsoleWrite('CreateSet<TIntegerStringPair>(List)');
-  ConsoleWrite('  ' + PairsToString(Enumerable));
+  ConsoleWrite('  ' + PairsToString(PairSet));
+  Enumerable := PairSet.Shuffled;
+  ConsoleWrite('  Shuffled: ' + PairsToString(Enumerable));
+  Enumerable := PairSet.Shuffled;
+  ConsoleWrite('  Shuffled: ' + PairsToString(Enumerable));
+end;
+
+procedure TActionDemoCollection.DoExecute;
+begin
+  ConsoleWrite('----------------------------------------');
+  ConsoleWrite('*** Spring4D.Base Collection Demo ***');
+  DoListOperationsDemo;
+  DoPairSelectionInList;
+  DoSpringSetDemo;
 end;
 
 end.
