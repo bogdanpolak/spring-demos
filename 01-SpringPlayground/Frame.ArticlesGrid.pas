@@ -4,11 +4,11 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids,
-  Vcl.DBGrids, Vcl.ExtCtrls, Vcl.DBCtrls,
-  Spring.Collections, System.Actions, Vcl.ActnList;
+  Vcl.DBGrids, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.ActnList,
+  Spring.Collections;
 
 type
   TArticle = class
@@ -96,7 +96,7 @@ var
 begin
   Memo1.Lines.Add('----------------------------------');
   if not Assigned(ArticleList) then
-    Guard.RaiseArgumentException('property: ActilceList is requred');
+    Guard.RaiseArgumentException('property: ArtilceList is requred');
   for Article in FArticleList do
     Memo1.Lines.Add(Article.ToString);
   grbxShowList.Width := 256;
