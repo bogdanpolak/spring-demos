@@ -6,12 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   System.Messaging,
-
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList,
   Vcl.StdCtrls, Vcl.ComCtrls,
   Data.DB,
   Plus.Vcl.PageControlFactory,
-  Plus.Vcl.ActionGuiBuilder, Action.Demo.Collections;
+  Plus.Vcl.ActionGuiBuilder;
 
 type
   TForm1 = class(TForm)
@@ -56,13 +55,15 @@ uses
   Spring.Logging.Appenders,
   Spring.Logging.Controller,
   // ----------------------------
+  Frame.ArticlesGrid,
+  Frame.Console,
+  Plus.Spring.EnumerableUtils,
+  // ----------------------------
+  Action.Demo.Collections,
   Action.DemoSpring.TEnum,
   Action.DemoSpring.Nullable,
   Action.DemoSpring.Predicate,
-  // ----------------------------
-  Frame.ArticlesGrid,
-  Frame.Console,
-  Plus.Spring.EnumerableUtils, Action.Demo.CustomerCollection;
+  Action.Demo.CustomerCollection;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
