@@ -25,7 +25,8 @@ uses
   System.SysUtils,
   System.Classes,
   System.StrUtils,
-  Spring;
+  Spring,
+  Spring.Collections;
 
 type
   TIntVector = Vector<Integer>;
@@ -49,16 +50,20 @@ procedure TMyTestObject.Test_Spring_Nullable;
 var
   aVaule1: Nullable<TStringList>;
   aVaule2: Nullable<TStringList>;
+  aVaule3: Nullable<IList<Integer>>;
   sl2: TStringList;
 begin
   aVaule1 := TStringList.Create();
   aVaule1.Value.Add('Aaaaa');
   Assert.AreEqual(False, aVaule2.HasValue);
   sl2 := aVaule2.GetValueOrDefault;
+  aVaule3 := TCollections.CreateList<Integer>();
+  aVaule3.Value.AddRange([1,2,3]);
 
   Assert.AreEqual(1, aVaule1.Value.Count);
   Assert.IsTrue(aVaule1.HasValue);
   Assert.IsNull(sl2);
+  Assert.IsTrue(aVaule3.HasValue);
   // Guard.CheckNotNull(sl2,'"sl2" is null');
   // Guard.CheckTrue(aVaule2.HasValue,'"aVaule2" has no value');
   // Guard.CheckInheritsFrom(aVaule1.Value, TComponent, '');
