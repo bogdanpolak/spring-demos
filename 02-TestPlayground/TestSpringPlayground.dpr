@@ -11,7 +11,9 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Test.Spring.Base in 'Test.Spring.Base.pas';
+  Test.Spring.Base in 'Test.Spring.Base.pas',
+  Delphi.Functional in 'Delphi.Functional.pas',
+  Test.Functional.Maybe in 'Test.Functional.Maybe.pas';
 
 var
   runner : ITestRunner;
