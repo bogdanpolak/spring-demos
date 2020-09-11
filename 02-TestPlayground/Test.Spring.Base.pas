@@ -8,15 +8,15 @@ uses
 type
   {$M+}
   [TestFixture]
-  TMyTestObject = class(TObject)
+  TestSpringBase = class(TObject)
   public
     // [Setup] procedure Setup;
     // [TearDown] procedure TearDown;
   published
-    procedure Test_Spring_Nullable;
-    procedure Test_Tuples;
-    procedure Test_Array;
-    procedure Test_Vector;
+    procedure Nullable;
+    procedure Tuples;
+    procedure TArrayExtention;
+    procedure Vector;
   end;
 
 implementation
@@ -46,7 +46,7 @@ begin
     Result := Result + ']';
 end;
 
-procedure TMyTestObject.Test_Spring_Nullable;
+procedure TestSpringBase.Nullable;
 var
   aVaule1: Nullable<TStringList>;
   aVaule2: Nullable<TStringList>;
@@ -70,7 +70,7 @@ begin
   // Guard.RaiseArgumentFormatException('Aaaaa');
 end;
 
-procedure TMyTestObject.Test_Tuples;
+procedure TestSpringBase.Tuples;
 var
   aTupleISD: Tuple<Integer, String, Double>;
   aKeyValue: Tuple<String, Variant>;
@@ -83,7 +83,7 @@ begin
   Assert.AreEqual('contacts',aKeyValue.Value1);
 end;
 
-procedure TMyTestObject.Test_Array;
+procedure TestSpringBase.TArrayExtention;
 var
   arr1: TArray<Integer>;
   arr2: TArray<Integer>;
@@ -95,7 +95,7 @@ begin
   Assert.AreEqual(3, arr2[2]);
 end;
 
-procedure TMyTestObject.Test_Vector;
+procedure TestSpringBase.Vector;
 var
   aIntVect: Vector<Integer>;
   aVect2: TIntVector;
@@ -110,6 +110,6 @@ end;
 
 initialization
 
-TDUnitX.RegisterTestFixture(TMyTestObject);
+TDUnitX.RegisterTestFixture(TestSpringBase);
 
 end.
