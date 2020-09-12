@@ -11,21 +11,18 @@ type
   [TestFixture]
   TestFunctionalMaybe = class(TObject)
   public
-    fInteger: Maybe<Integer>;
     // [Setup] procedure Setup;
     // [TearDown] procedure TearDown;
   published
-    procedure TestInitialValue;
-    procedure TestAssignFive;
+    procedure HasValue;
+    procedure Assign99;
     procedure TestException;
-    procedure TestLocalVariable;
-    procedure TestFromVariant;
+    procedure MaybeFromVariant;
     procedure TestEquals;
-    procedure TestDefaultReturnsInitialValue;
     procedure TestAssignFloat;
     procedure TestAssignStringInt;
-    procedure TestNullableNull;
-    procedure TestAssignNull;
+    procedure AssignSetOf;
+    procedure AssignNoValue;
   end;
 
 implementation
@@ -36,18 +33,30 @@ uses
   System.StrUtils,
   System.Variants;
 
-procedure TestFunctionalMaybe.TestInitialValue;
+procedure TestFunctionalMaybe.HasValue;
+var
+  maybeString: Maybe<String>;
 begin
-  Assert.IsFalse(fInteger.HasValue);
+  Assert.IsTrue(maybeString.HasValue = False);
+  maybeString:= '';
+  Assert.IsTrue(maybeString.HasValue);
 end;
 
-procedure TestFunctionalMaybe.TestAssignFive;
+procedure TestFunctionalMaybe.Assign99;
+var
+  maybeInteger: Maybe<Integer>;
 begin
-  fInteger := 5;
-  Assert.IsTrue(fInteger.HasValue);
-  Assert.AreEqual(5, fInteger.Value);
-  Assert.IsTrue(fInteger.Value = 5);
-  Assert.IsTrue(fInteger.Value <> 3);
+  maybeInteger := 99;
+  Assert.AreEqual(99, maybeInteger.Value);
+end;
+
+procedure TestFunctionalMaybe.AssignNoValue;
+var
+  maybeInteger: Maybe<Integer>;
+begin
+  maybeInteger := 11;
+  maybeInteger := nil;
+  Assert.IsTrue(not maybeInteger.HasValue);
 end;
 
 procedure TestFunctionalMaybe.TestAssignFloat;
@@ -55,15 +64,6 @@ begin
   // ExpectedException := EInvalidCast;
   // fInteger := Maybe<Integer>(99.9);
   Assert.Pass();
-end;
-
-procedure TestFunctionalMaybe.TestAssignNull;
-var
-  v: Maybe<Integer>;
-begin
-  v := 5;
-  v := nil;
-  Assert.IsTrue(not v.HasValue);
 end;
 
 procedure TestFunctionalMaybe.TestAssignStringInt;
@@ -74,12 +74,6 @@ begin
   Assert.Pass();
 end;
 
-procedure TestFunctionalMaybe.TestDefaultReturnsInitialValue;
-begin
-  fInteger := Default(Maybe<Integer>);
-  Assert.IsFalse(fInteger.HasValue);
-end;
-
 procedure TestFunctionalMaybe.TestException;
 begin
   // ExpectedException := EInvalidOperationException;
@@ -87,47 +81,31 @@ begin
   Assert.Pass();
 end;
 
-procedure TestFunctionalMaybe.TestLocalVariable;
+procedure TestFunctionalMaybe.AssignSetOf;
 var
-  dirtyValue: Maybe<Integer>;
+  maybeSet: Maybe<TReplaceFlags>;
 begin
-  Assert.IsFalse(dirtyValue.HasValue);
-  Assert.IsTrue(dirtyValue = nil);
-  dirtyValue := 5;
-  Assert.IsTrue(dirtyValue <> nil);
+  maybeSet := [rfIgnoreCase];
+  Assert.IsTrue(maybeSet = [rfIgnoreCase]);
+  maybeSet := nil;
+  Assert.IsTrue(maybeSet.HasValue = False);
 end;
 
-procedure TestFunctionalMaybe.TestNullableNull;
-begin
-  fInteger := 42;
-  Assert.AreEqual(42, fInteger.Value);
-  fInteger := nil;
-  Assert.IsTrue(not fInteger.HasValue);
-  Assert.IsTrue(fInteger = nil);
-  Assert.IsFalse(fInteger <> nil);
-end;
-
-procedure TestFunctionalMaybe.TestFromVariant;
+procedure TestFunctionalMaybe.MaybeFromVariant;
 var
+  maybeInteger: Maybe<Integer>;
   value: Variant;
 const
-  ExpectedInteger: Integer = 5;
+  ExpectedInteger: Integer = 999;
 begin
-  value := Null;
-  fInteger := Maybe<Integer>.Create(value);
-  Assert.IsFalse(fInteger.HasValue);
-
-{$IFDEF UNSAFE_NULLABLE}
-  fInteger := value;
-{$ELSE}
-  fInteger := Maybe<Integer>(value);
-{$ENDIF}
-  Assert.IsFalse(fInteger.HasValue);
-
+  maybeInteger := Maybe<Integer>.Create(value);
+  Assert.IsTrue(maybeInteger.HasValue = False);
+  maybeInteger := System.Variants.Null;
+  Assert.IsTrue(maybeInteger.HasValue = False);
   value := ExpectedInteger;
-  fInteger := Maybe<Integer>.Create(value);
-  Assert.IsTrue(fInteger.HasValue);
-  Assert.AreEqual(ExpectedInteger, fInteger.Value);
+  maybeInteger := Maybe<Integer>.Create(value);
+  Assert.IsTrue(maybeInteger.HasValue);
+  Assert.AreEqual(ExpectedInteger, maybeInteger.Value);
 end;
 
 procedure TestFunctionalMaybe.TestEquals;
