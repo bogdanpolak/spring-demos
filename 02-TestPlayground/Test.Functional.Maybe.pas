@@ -20,6 +20,7 @@ type
     procedure Equals_OneToAnother;
 
     procedure Exception_InvalidCast_WhenFloatToWord;
+    procedure Exception_InvalidCast_WhenNegativeToByte;
     procedure Exception_InvalidCast_WhenNumerciStringToInteger;
     procedure Exception_InvalidOperation_WhenGetNoValue;
   end;
@@ -61,6 +62,7 @@ var
   maybeSetEmpty: Maybe<TReplaceFlags>;
   maybeSetIgnoreCase: Maybe<TReplaceFlags>;
   maybeCurrency111_99: Maybe<Currency>;
+  maybeCompareOption_StringSort: Maybe<TCompareOption>;
 begin
   variant111_99 := 111.99;
 
@@ -68,6 +70,7 @@ begin
   maybeCurrency111_99 := Maybe<Currency>.Create(variant111_99);
   maybeSetEmpty := [];
   maybeSetIgnoreCase := [rfIgnoreCase];
+  maybeCompareOption_StringSort := coStringSort;
 
   Assert.AreEqual(99, maybeInteger99.Value);
   Assert.IsTrue(maybeSetIgnoreCase.Value = [rfIgnoreCase]);
@@ -76,6 +79,7 @@ begin
   Assert.IsTrue(maybeCurrency111_99.HasValue);
   Assert.AreEqual(111.99, maybeCurrency111_99.Value, 0.00001);
   Assert.IsTrue(maybeCurrency111_99 = 111.99);
+  Assert.AreEqual(coStringSort, maybeCompareOption_StringSort.Value);
 end;
 
 procedure TestFunctionalMaybe.Equals_OneToAnother;
@@ -102,6 +106,20 @@ begin
   Assert.WillRaise(procedure begin
     maybeWord := Maybe<Word>(99.9);
   end, EInvalidCast);
+end;
+
+procedure TestFunctionalMaybe.Exception_InvalidCast_WhenNegativeToByte;
+var
+  maybeByte: Maybe<Byte>;
+begin
+    // *********************************************
+    maybeByte := Maybe<Byte>(-2);
+    Assert.AreEqual(254, Integer(maybeByte));
+    // *********************************************
+    // should be thrown invalid cast exception:
+    // Assert.WillRaise(procedure begin
+    //   maybeByte := Maybe<Byte>(-2);
+    // end, EInvalidCast);
 end;
 
 procedure TestFunctionalMaybe.Exception_InvalidCast_WhenNumerciStringToInteger;
