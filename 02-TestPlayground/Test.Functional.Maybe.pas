@@ -16,6 +16,7 @@ type
   published
     procedure HasValue;
     procedure AssignPrimitiveValues;
+    procedure AssignRecords;
     procedure AssignClasses;
     procedure NoValue;
     procedure Equals_OneToAnother;
@@ -33,6 +34,32 @@ uses
   System.Classes,
   System.StrUtils,
   System.Variants;
+
+// ----------------------------------------------------------------------------
+// TPoint2D record
+// ----------------------------------------------------------------------------
+
+type
+  TPoint2D = record
+    X: integer;
+    Y: integer;
+    constructor Create(const aX, aY: integer);
+    function ToString: string;
+  end;
+
+constructor TPoint2D.Create(const aX, aY: integer);
+begin
+  X := aX;
+  Y := aY;
+end;
+
+function TPoint2D.ToString: string;
+begin
+  Result := Format('[%d,%d]',[X,Y]);
+end;
+
+// ----------------------------------------------------------------------------
+
 
 procedure TestFunctionalMaybe.HasValue;
 var
@@ -81,6 +108,15 @@ begin
   Assert.AreEqual(111.99, maybeCurrency111_99.Value, 0.00001);
   Assert.IsTrue(maybeCurrency111_99 = 111.99);
   Assert.AreEqual(coStringSort, maybeCompareOption_StringSort.Value);
+end;
+
+procedure TestFunctionalMaybe.AssignRecords;
+var
+  maybePoint2D: Maybe<TPoint2D>;
+begin
+  maybePoint2D := TPoint2D.Create(5,-2);
+
+  Assert.AreEqual('[5,-2]', maybePoint2D.Value.ToString);
 end;
 
 procedure TestFunctionalMaybe.AssignClasses;
