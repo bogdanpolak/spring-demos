@@ -16,6 +16,7 @@ type
   published
     procedure HasValue;
     procedure AssignPrimitiveValues;
+    procedure AssignClasses;
     procedure NoValue;
     procedure Equals_OneToAnother;
 
@@ -81,6 +82,30 @@ begin
   Assert.IsTrue(maybeCurrency111_99 = 111.99);
   Assert.AreEqual(coStringSort, maybeCompareOption_StringSort.Value);
 end;
+
+procedure TestFunctionalMaybe.AssignClasses;
+var
+  maybeStringList: Maybe<TStringList>;
+  maybeStringBuilder: Maybe<TStringBuilder>;
+  maybeTStringArray: Maybe<TArray<String>>;
+begin
+  maybeStringList := TStringList.Create
+    .AddPair('id','1')
+    .AddPair('name','Bogdan') as TStringList;
+  maybeStringBuilder:= TStringBuilder.Create
+    .AppendFormat('%s {$ver}',['Super Application'])
+    .AppendFormat(' © %d',[2020])
+    .Replace('{$ver}','1.0');
+  maybeTStringArray := ['aaa','bbb'];
+
+  Assert.AreEqual('id=1,name=Bogdan',maybeStringList.Value.CommaText);
+  Assert.AreEqual('Super Application 1.0 © 2020',maybeStringBuilder.Value.ToString);
+  Assert.AreEqual('bbb',maybeTStringArray.Value[1]);
+
+  maybeStringList.Value.Free;
+  maybeStringBuilder.Value.Free;
+end;
+
 
 procedure TestFunctionalMaybe.Equals_OneToAnother;
 var
