@@ -35,13 +35,9 @@ type
     constructor Create(const value: T); overload;
     constructor Create(const value: Variant); overload;
 
-    function GetValueOrDefault(const defaultValue: T): T; overload;
     function TryGetValue(out value: T): Boolean; inline;
 
     function Equals(const other: Maybe<T>): Boolean;
-
-    function ToString: string;
-    function ToVariant: Variant;
 
     property HasValue: Boolean read GetHasValue;
     property Value: T read GetValue;
@@ -110,14 +106,6 @@ begin
   if not HasValue then
     raise EInvalidOperationException.Create('Maybe Has No Value') at ReturnAddress;
   Result := fValue;
-end;
-
-function Maybe<T>.GetValueOrDefault(const defaultValue: T): T;
-begin
-  if HasValue then
-    Result := fValue
-  else
-    Result := defaultValue;
 end;
 
 class function Maybe<T>.EqualsComparer(const left, right: T): Boolean;
@@ -286,35 +274,6 @@ begin
   if left.fHasValue = '' then
     Exit(True);
   Result := not EqualsInternal(left.fValue, right);
-end;
-
-function Maybe<T>.ToString: string;
-var
-  v: TValue;
-begin
-  if HasValue then
-  begin
-    v := TValue.From<T>(fValue);
-    Result := v.ToString;
-  end
-  else
-    Result := 'Null';
-end;
-
-function Maybe<T>.ToVariant: Variant;
-var
-  v: TValue;
-begin
-  if HasValue then
-  begin
-    v := TValue.From<T>(fValue);
-    if v.IsType<Boolean> then
-      Result := v.AsBoolean
-    else
-      Result := v.AsVariant;
-  end
-  else
-    Result := Null;
 end;
 
 function Maybe<T>.TryGetValue(out value: T): Boolean;
