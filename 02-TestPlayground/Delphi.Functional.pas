@@ -22,14 +22,6 @@ type
     type Null = interface end;
   end;
 
-  /// <summary>
-  ///   A nullable type can represent the normal range of values for its
-  ///   underlying value type, plus an additional <c>Null</c> value.
-  /// </summary>
-  /// <typeparam name="T">
-  ///   The underlying value type of the <see cref="Nullable&lt;T&gt;" />
-  ///   generic type.
-  /// </typeparam>
   Maybe<T> = record
   private
     fValue: T;
@@ -40,82 +32,18 @@ type
     function GetValue: T; inline;
     function GetHasValue: Boolean; inline;
   public
-    /// <summary>
-    ///   Initializes a new instance of the <see cref="Nullable&lt;T&gt;" />
-    ///   structure to the specified value.
-    /// </summary>
     constructor Create(const value: T); overload;
-
-    /// <summary>
-    ///   Initializes a new instance of the <see cref="Nullable&lt;T&gt;" />
-    ///   structure to the specified value.
-    /// </summary>
     constructor Create(const value: Variant); overload;
 
-    /// <summary>
-    ///   Retrieves the value of the current <see cref="Nullable&lt;T&gt;" />
-    ///   object, or the specified default value.
-    /// </summary>
-    /// <param name="defaultValue">
-    ///   A value to return if the <see cref="HasValue" /> property is <c>False</c>
-    ///    .
-    /// </param>
-    /// <returns>
-    ///   The value of the <see cref="Value" /> property if the <see cref="HasValue" />
-    ///    property is true; otherwise, the <paramref name="defaultValue" />
-    ///   parameter.
-    /// </returns>
-    /// <remarks>
-    ///   The <see cref="GetValueOrDefault" /> method returns a value even if
-    ///   the <see cref="HasValue" /> property is false (unlike the <see cref="Value" />
-    ///    property, which throws an exception).
-    /// </remarks>
     function GetValueOrDefault(const defaultValue: T): T; overload;
+    function TryGetValue(out value: T): Boolean; inline;
 
-    /// <summary>
-    ///   Determines whether two nullable value are equal.
-    /// </summary>
-    /// <remarks>
-    ///   <para>
-    ///     If both two nullable values are null, return true;
-    ///   </para>
-    ///   <para>
-    ///     If either one is null, return false;
-    ///   </para>
-    ///   <para>
-    ///     else compares their values as usual.
-    ///   </para>
-    /// </remarks>
     function Equals(const other: Maybe<T>): Boolean;
 
     function ToString: string;
-
-    /// <summary>
-    ///   Returns the stored value as variant.
-    /// </summary>
-    /// <exception cref="EInvalidCast">
-    ///   The type of T cannot be cast to Variant
-    /// </exception>
     function ToVariant: Variant;
 
-    /// <summary>
-    ///   Gets the stored value. Returns <c>False</c> if it does not contain a
-    ///   value.
-    /// </summary>
-    function TryGetValue(out value: T): Boolean; inline;
-
-    /// <summary>
-    ///   Gets a value indicating whether the current <see cref="Nullable&lt;T&gt;" />
-    ///    structure has a value.
-    /// </summary>
     property HasValue: Boolean read GetHasValue;
-
-    /// <summary>
-    ///   Gets the value of the current <see cref="Nullable&lt;T&gt;" /> value.
-    /// </summary>
-    /// <exception cref="Spring|EInvalidOperationException">
-    ///   Raised if the value is null.
-    /// </exception>
     property Value: T read GetValue;
 
     class operator Implicit(const value: Maybe.Null): Maybe<T>;
