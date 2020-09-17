@@ -2,8 +2,7 @@ unit Delphi.Functional;
 
 interface
 
-{$DEFINE IMPLICIT_Maybe}
-{$DEFINE UNSAFE_Maybe}
+{$DEFINE IMPLICIT_MAYBE}
 
 uses
   System.Classes,
@@ -48,11 +47,8 @@ type
 
     class operator Implicit(const value: Maybe.NoValue): Maybe<T>;
     class operator Implicit(const value: T): Maybe<T>;
-    {$IFDEF IMPLICIT_Maybe}
+    {$IFDEF IMPLICIT_MAYBE}
     class operator Implicit(const value: Maybe<T>): T;
-    {$ENDIF}
-    {$IFDEF UNSAFE_Maybe}
-    class operator Implicit(const value: Maybe<T>): Variant;
     class operator Implicit(const value: Variant): Maybe<T>;
     {$ENDIF}
 
@@ -182,28 +178,10 @@ begin
   Result.fHasValue := Maybe.HasValue;
 end;
 
-{$IFDEF IMPLICIT_Maybe}
+{$IFDEF IMPLICIT_MAYBE}
 class operator Maybe<T>.Implicit(const value: Maybe<T>): T;
 begin
   Result := value.Value;
-end;
-{$ENDIF}
-
-{$IFDEF UNSAFE_Maybe}
-class operator Maybe<T>.Implicit(const value: Maybe<T>): Variant;
-var
-  v: TValue;
-begin
-  if value.HasValue then
-  begin
-    v := TValue.From<T>(value.fValue);
-    if v.IsType<Boolean> then
-      Result := v.AsBoolean
-    else
-      Result := v.AsVariant;
-  end
-  else
-    Result := Null;
 end;
 
 class operator Maybe<T>.Implicit(const value: Variant): Maybe<T>;

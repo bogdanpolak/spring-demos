@@ -14,7 +14,9 @@ type
     // [TearDown] procedure TearDown;
   published
     procedure GetValue;
+    {$IFDEF IMPLICIT_MAYBE}
     procedure GetValueImplicit;
+    {$ENDIF}
     procedure HasValue;
     procedure AssignPrimitiveValues;
     procedure AssignRecords;
@@ -79,6 +81,7 @@ begin
   Assert.AreEqual('string',sTryGet);
 end;
 
+{$IFDEF IMPLICIT_MAYBE}
 procedure TestFunctionalMaybe.GetValueImplicit;
 var
   maybeInteger99: Maybe<Integer>;
@@ -101,6 +104,7 @@ begin
   Assert.IsTrue([rfIgnoreCase] = setReplaceFlags);
   Assert.AreEqual(111.99, currency111_99, 0.00001);
 end;
+{$ENDIF}
 
 procedure TestFunctionalMaybe.HasValue;
 var
