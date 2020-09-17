@@ -3,17 +3,17 @@ unit Delphi.Functional;
 interface
 
 uses
-  Classes,
-  Diagnostics,
+  System.Classes,
+  System.Diagnostics,
   Generics.Collections,
   Generics.Defaults,
-  Rtti,
-  SyncObjs,
-  SysUtils,
-  TimeSpan,
-  Types,
-  TypInfo,
-  Variants;
+  System.Rtti,
+  System.SyncObjs,
+  System.SysUtils,
+  System.TimeSpan,
+  System.Types,
+  System.TypInfo,
+  System.Variants;
 
 type
   Maybe = record
@@ -45,6 +45,13 @@ type
 
     class operator Implicit(const value: Maybe.NoValue): Maybe<T>;
     class operator Implicit(const value: T): Maybe<T>;
+    {$IFDEF IMPLICIT_Maybe}
+    class operator Implicit(const value: Maybe<T>): T;
+    {$ENDIF}
+    {$IFDEF UNSAFE_Maybe}
+    class operator Implicit(const value: Maybe<T>): Variant;
+    class operator Implicit(const value: Variant): Maybe<T>;
+    {$ENDIF}
 
     class operator Explicit(const value: Variant): Maybe<T>;
     class operator Explicit(const value: Maybe<T>): T; inline;
@@ -99,7 +106,7 @@ end;
 function Maybe<T>.GetValue: T;
 begin
   if not HasValue then
-    raise SysUtils.EInvalidOpException.Create('Maybe Has No Value') at ReturnAddress;
+    raise System.SysUtils.EInvalidOpException.Create('Maybe Has No Value') at ReturnAddress;
   Result := fValue;
 end;
 
