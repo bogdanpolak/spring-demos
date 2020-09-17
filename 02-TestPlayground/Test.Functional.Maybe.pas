@@ -91,6 +91,7 @@ var
   integer99: Integer;
   currency111_99: Currency;
   setReplaceFlags: TReplaceFlags;
+  v: Variant;
 begin
   maybeInteger99 := Maybe<Integer>.Create(99);
   maybeCurrency111_99 := Maybe<Currency>.Create(111.99);
@@ -99,10 +100,12 @@ begin
   integer99 := maybeInteger99;
   currency111_99 := maybeCurrency111_99;
   setReplaceFlags := maybeSetReplaceFlags;
+  v := maybeCurrency111_99;
 
   Assert.AreEqual(99, integer99);
   Assert.IsTrue([rfIgnoreCase] = setReplaceFlags);
   Assert.AreEqual(111.99, currency111_99, 0.00001);
+  Assert.AreEqual(111.99, v, 0.00001);
 end;
 {$ENDIF}
 
