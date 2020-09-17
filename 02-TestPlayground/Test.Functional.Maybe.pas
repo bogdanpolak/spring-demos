@@ -13,6 +13,7 @@ type
     // [Setup] procedure Setup;
     // [TearDown] procedure TearDown;
   published
+    procedure GetValue;
     procedure HasValue;
     procedure AssignPrimitiveValues;
     procedure AssignRecords;
@@ -61,6 +62,21 @@ end;
 
 // ----------------------------------------------------------------------------
 
+
+procedure TestFunctionalMaybe.GetValue;
+var
+  maybeEmptyString: Maybe<String>;
+  hasValue: Boolean;
+  sValue, sTryGet: String;
+begin
+  maybeEmptyString:= 'string';
+  sValue := maybeEmptyString.Value;
+  hasValue := maybeEmptyString.TryGetValue(sTryGet);
+
+  Assert.AreEqual('string',sValue);
+  Assert.IsTrue(hasValue);
+  Assert.AreEqual('string',sTryGet);
+end;
 
 procedure TestFunctionalMaybe.HasValue;
 var
