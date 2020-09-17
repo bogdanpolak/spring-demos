@@ -29,6 +29,7 @@ type
     class var fComparer: IEqualityComparer<T>;
     class function EqualsComparer(const left, right: T): Boolean; static;
     class function EqualsInternal(const left, right: T): Boolean; static; inline;
+    class function IsNullOrEmpty(const value: Variant): boolean; static; inline;
     function GetValue: T; inline;
     function GetHasValue: Boolean; inline;
   public
@@ -56,20 +57,11 @@ type
     class operator NotEqual(const left: Maybe<T>; const right: T): Boolean; inline;
   end;
 
-function VarIsNullOrEmpty(const value: Variant): Boolean;
-
 implementation
 
 uses
   Math,
   DateUtils;
-
-
-function VarIsNullOrEmpty(const value: Variant): Boolean;
-begin
-  Result := FindVarData(value).VType in [varEmpty, varNull];
-end;
-
 
 constructor Maybe<T>.Create(const value: T);
 begin
@@ -77,11 +69,16 @@ begin
   fHasValue := Maybe.HasValue;
 end;
 
+class function Maybe<T>.IsNullOrEmpty(const value: Variant): boolean;
+begin
+  Result := FindVarData(value).VType in [varEmpty, varNull];
+end;
+
 constructor Maybe<T>.Create(const value: Variant);
 var
   v: TValue;
 begin
-  if not VarIsNullOrEmpty(value) then
+  if not IsNullOrEmpty(value) then
   begin
     v := TValue.FromVariant(value);
     fValue := v.AsType<T>;
@@ -203,7 +200,7 @@ class operator Maybe<T>.Implicit(const value: Variant): Maybe<T>;
 var
   v: TValue;
 begin
-  if not VarIsNullOrEmpty(value) then
+  if not IsNullOrEmpty(value) then
   begin
     v := TValue.FromVariant(value);
     Result.fValue := v.AsType<T>;
@@ -218,7 +215,7 @@ class operator Maybe<T>.Explicit(const value: Variant): Maybe<T>;
 var
   v: TValue;
 begin
-  if not VarIsNullOrEmpty(value) then
+  if not isNullOrEmpty(value) then
   begin
     v := TValue.FromVariant(value);
     Result.fValue := v.AsType<T>;
