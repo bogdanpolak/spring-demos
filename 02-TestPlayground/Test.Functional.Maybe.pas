@@ -14,6 +14,7 @@ type
     // [TearDown] procedure TearDown;
   published
     procedure GetValue;
+    procedure GetValueImplicit;
     procedure HasValue;
     procedure AssignPrimitiveValues;
     procedure AssignRecords;
@@ -76,6 +77,29 @@ begin
   Assert.AreEqual('string',sValue);
   Assert.IsTrue(hasValue);
   Assert.AreEqual('string',sTryGet);
+end;
+
+procedure TestFunctionalMaybe.GetValueImplicit;
+var
+  maybeInteger99: Maybe<Integer>;
+  maybeCurrency111_99: Maybe<Currency>;
+  maybeSetReplaceFlags: Maybe<TReplaceFlags>;
+
+  integer99: Integer;
+  currency111_99: Currency;
+  setReplaceFlags: TReplaceFlags;
+begin
+  maybeInteger99 := Maybe<Integer>.Create(99);
+  maybeCurrency111_99 := Maybe<Currency>.Create(111.99);
+  maybeSetReplaceFlags := Maybe<TReplaceFlags>.Create([rfIgnoreCase]);
+
+  integer99 := maybeInteger99;
+  currency111_99 := maybeCurrency111_99;
+  setReplaceFlags := maybeSetReplaceFlags;
+
+  Assert.AreEqual(99, integer99);
+  Assert.IsTrue([rfIgnoreCase] = setReplaceFlags);
+  Assert.AreEqual(111.99, currency111_99, 0.00001);
 end;
 
 procedure TestFunctionalMaybe.HasValue;

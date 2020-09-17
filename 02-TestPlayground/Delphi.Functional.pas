@@ -2,6 +2,9 @@ unit Delphi.Functional;
 
 interface
 
+{$DEFINE IMPLICIT_Maybe}
+{$DEFINE UNSAFE_Maybe}
+
 uses
   System.Classes,
   System.Diagnostics,
