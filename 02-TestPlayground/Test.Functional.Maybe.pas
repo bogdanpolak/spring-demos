@@ -3,8 +3,7 @@ unit Test.Functional.Maybe;
 interface
 
 uses
-  DUnitX.TestFramework,
-  Delphi.Functional;
+  DUnitX.TestFramework;
 
 type
   {$M+}
@@ -33,7 +32,9 @@ uses
   System.SysUtils,
   System.Classes,
   System.StrUtils,
-  System.Variants;
+  System.Variants,
+  {}
+  Delphi.Functional;
 
 // ----------------------------------------------------------------------------
 // TPoint2D record
