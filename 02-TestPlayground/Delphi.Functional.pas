@@ -56,21 +56,19 @@ type
     class operator NotEqual(const left: Maybe<T>; const right: T): Boolean; inline;
   end;
 
+function VarIsNullOrEmpty(const value: Variant): Boolean;
 
 implementation
 
 uses
   Math,
-  DateUtils,
-  Spring;
+  DateUtils;
 
 
-{
 function VarIsNullOrEmpty(const value: Variant): Boolean;
 begin
   Result := FindVarData(value).VType in [varEmpty, varNull];
 end;
-}
 
 
 constructor Maybe<T>.Create(const value: T);
@@ -104,7 +102,7 @@ end;
 function Maybe<T>.GetValue: T;
 begin
   if not HasValue then
-    raise EInvalidOperationException.Create('Maybe Has No Value') at ReturnAddress;
+    raise SysUtils.EInvalidOpException.Create('Maybe Has No Value') at ReturnAddress;
   Result := fValue;
 end;
 
@@ -116,8 +114,11 @@ begin
 end;
 
 class function Maybe<T>.EqualsInternal(const left, right: T): Boolean;
+var
+  typeKind: TTypeKind;
 begin
-  case TType.Kind<T> of
+  typeKind := System.GetTypeKind(T);
+  case typeKind of
     tkInteger, tkEnumeration:
     begin
       case SizeOf(T) of
