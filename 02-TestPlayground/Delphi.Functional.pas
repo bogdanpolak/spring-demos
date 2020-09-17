@@ -19,7 +19,7 @@ type
   Maybe = record
   private
     const HasValue = 'True';
-    type Null = interface end;
+    type NoValue = interface end;
   end;
 
   Maybe<T> = record
@@ -42,17 +42,17 @@ type
     property HasValue: Boolean read GetHasValue;
     property Value: T read GetValue;
 
-    class operator Implicit(const value: Maybe.Null): Maybe<T>;
+    class operator Implicit(const value: Maybe.NoValue): Maybe<T>;
     class operator Implicit(const value: T): Maybe<T>;
 
     class operator Explicit(const value: Variant): Maybe<T>;
     class operator Explicit(const value: Maybe<T>): T; inline;
 
     class operator Equal(const left, right: Maybe<T>): Boolean; inline;
-    class operator Equal(const left: Maybe<T>; const right: Maybe.Null): Boolean; inline;
+    class operator Equal(const left: Maybe<T>; const right: Maybe.NoValue): Boolean; inline;
     class operator Equal(const left: Maybe<T>; const right: T): Boolean; inline;
     class operator NotEqual(const left, right: Maybe<T>): Boolean; inline;
-    class operator NotEqual(const left: Maybe<T>; const right: Maybe.Null): Boolean; inline;
+    class operator NotEqual(const left: Maybe<T>; const right: Maybe.NoValue): Boolean; inline;
     class operator NotEqual(const left: Maybe<T>; const right: T): Boolean; inline;
   end;
 
@@ -232,7 +232,7 @@ begin
   Result := value.Value;
 end;
 
-class operator Maybe<T>.Implicit(const value: Maybe.Null): Maybe<T>;
+class operator Maybe<T>.Implicit(const value: Maybe.NoValue): Maybe<T>;
 begin
   Result.fValue := Default(T);
   Result.fHasValue := '';
@@ -252,7 +252,7 @@ begin
 end;
 
 class operator Maybe<T>.Equal(const left: Maybe<T>;
-  const right: Maybe.Null): Boolean;
+  const right: Maybe.NoValue): Boolean;
 begin
   Result := left.fHasValue = '';
 end;
@@ -263,7 +263,7 @@ begin
 end;
 
 class operator Maybe<T>.NotEqual(const left: Maybe<T>;
-  const right: Maybe.Null): Boolean;
+  const right: Maybe.NoValue): Boolean;
 begin
   Result := left.fHasValue <> '';
 end;
