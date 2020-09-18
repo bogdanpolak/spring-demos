@@ -2,34 +2,28 @@ unit Delphi.Functional;
 
 interface
 
+{-- $DEFINE UNSECURE_MAYBE}
+
 uses
-  Classes,
-  Diagnostics,
+  System.Classes,
+  System.Diagnostics,
   Generics.Collections,
   Generics.Defaults,
-  Rtti,
-  SyncObjs,
-  SysUtils,
-  TimeSpan,
-  Types,
-  TypInfo,
-  Variants;
+  System.Rtti,
+  System.SyncObjs,
+  System.SysUtils,
+  System.TimeSpan,
+  System.Types,
+  System.TypInfo,
+  System.Variants;
 
 type
   Maybe = record
   private
     const HasValue = 'True';
-    type Null = interface end;
+    type NoValue = interface end;
   end;
 
-  /// <summary>
-  ///   A nullable type can represent the normal range of values for its
-  ///   underlying value type, plus an additional <c>Null</c> value.
-  /// </summary>
-  /// <typeparam name="T">
-  ///   The underlying value type of the <see cref="Nullable&lt;T&gt;" />
-  ///   generic type.
-  /// </typeparam>
   Maybe<T> = record
   private
     fValue: T;
@@ -37,117 +31,43 @@ type
     class var fComparer: IEqualityComparer<T>;
     class function EqualsComparer(const left, right: T): Boolean; static;
     class function EqualsInternal(const left, right: T): Boolean; static; inline;
+    class function IsNullOrEmpty(const value: Variant): boolean; static; inline;
     function GetValue: T; inline;
     function GetHasValue: Boolean; inline;
   public
-    /// <summary>
-    ///   Initializes a new instance of the <see cref="Nullable&lt;T&gt;" />
-    ///   structure to the specified value.
-    /// </summary>
     constructor Create(const value: T); overload;
-
-    /// <summary>
-    ///   Initializes a new instance of the <see cref="Nullable&lt;T&gt;" />
-    ///   structure to the specified value.
-    /// </summary>
     constructor Create(const value: Variant); overload;
 
-    /// <summary>
-    ///   Retrieves the value of the current <see cref="Nullable&lt;T&gt;" />
-    ///   object, or the specified default value.
-    /// </summary>
-    /// <param name="defaultValue">
-    ///   A value to return if the <see cref="HasValue" /> property is <c>False</c>
-    ///    .
-    /// </param>
-    /// <returns>
-    ///   The value of the <see cref="Value" /> property if the <see cref="HasValue" />
-    ///    property is true; otherwise, the <paramref name="defaultValue" />
-    ///   parameter.
-    /// </returns>
-    /// <remarks>
-    ///   The <see cref="GetValueOrDefault" /> method returns a value even if
-    ///   the <see cref="HasValue" /> property is false (unlike the <see cref="Value" />
-    ///    property, which throws an exception).
-    /// </remarks>
-    function GetValueOrDefault(const defaultValue: T): T; overload;
-
-    /// <summary>
-    ///   Determines whether two nullable value are equal.
-    /// </summary>
-    /// <remarks>
-    ///   <para>
-    ///     If both two nullable values are null, return true;
-    ///   </para>
-    ///   <para>
-    ///     If either one is null, return false;
-    ///   </para>
-    ///   <para>
-    ///     else compares their values as usual.
-    ///   </para>
-    /// </remarks>
-    function Equals(const other: Maybe<T>): Boolean;
-
-    function ToString: string;
-
-    /// <summary>
-    ///   Returns the stored value as variant.
-    /// </summary>
-    /// <exception cref="EInvalidCast">
-    ///   The type of T cannot be cast to Variant
-    /// </exception>
-    function ToVariant: Variant;
-
-    /// <summary>
-    ///   Gets the stored value. Returns <c>False</c> if it does not contain a
-    ///   value.
-    /// </summary>
     function TryGetValue(out value: T): Boolean; inline;
 
-    /// <summary>
-    ///   Gets a value indicating whether the current <see cref="Nullable&lt;T&gt;" />
-    ///    structure has a value.
-    /// </summary>
-    property HasValue: Boolean read GetHasValue;
+    function Equals(const other: Maybe<T>): Boolean;
 
-    /// <summary>
-    ///   Gets the value of the current <see cref="Nullable&lt;T&gt;" /> value.
-    /// </summary>
-    /// <exception cref="Spring|EInvalidOperationException">
-    ///   Raised if the value is null.
-    /// </exception>
+    property HasValue: Boolean read GetHasValue;
     property Value: T read GetValue;
 
-    class operator Implicit(const value: Maybe.Null): Maybe<T>;
+    class operator Implicit(const value: Maybe.NoValue): Maybe<T>;
     class operator Implicit(const value: T): Maybe<T>;
+    {$IFDEF UNSECURE_MAYBE}
+    class operator Implicit(const value: Maybe<T>): T;
+    {$ENDIF}
+    class operator Implicit(const value: Variant): Maybe<T>;
 
     class operator Explicit(const value: Variant): Maybe<T>;
     class operator Explicit(const value: Maybe<T>): T; inline;
 
     class operator Equal(const left, right: Maybe<T>): Boolean; inline;
-    class operator Equal(const left: Maybe<T>; const right: Maybe.Null): Boolean; inline;
+    class operator Equal(const left: Maybe<T>; const right: Maybe.NoValue): Boolean; inline;
     class operator Equal(const left: Maybe<T>; const right: T): Boolean; inline;
     class operator NotEqual(const left, right: Maybe<T>): Boolean; inline;
-    class operator NotEqual(const left: Maybe<T>; const right: Maybe.Null): Boolean; inline;
+    class operator NotEqual(const left: Maybe<T>; const right: Maybe.NoValue): Boolean; inline;
     class operator NotEqual(const left: Maybe<T>; const right: T): Boolean; inline;
   end;
-
 
 implementation
 
 uses
   Math,
-  DateUtils,
-  Spring;
-
-
-{
-function VarIsNullOrEmpty(const value: Variant): Boolean;
-begin
-  Result := FindVarData(value).VType in [varEmpty, varNull];
-end;
-}
-
+  DateUtils;
 
 constructor Maybe<T>.Create(const value: T);
 begin
@@ -155,11 +75,16 @@ begin
   fHasValue := Maybe.HasValue;
 end;
 
+class function Maybe<T>.IsNullOrEmpty(const value: Variant): boolean;
+begin
+  Result := FindVarData(value).VType in [varEmpty, varNull];
+end;
+
 constructor Maybe<T>.Create(const value: Variant);
 var
   v: TValue;
 begin
-  if not VarIsNullOrEmpty(value) then
+  if not IsNullOrEmpty(value) then
   begin
     v := TValue.FromVariant(value);
     fValue := v.AsType<T>;
@@ -180,16 +105,8 @@ end;
 function Maybe<T>.GetValue: T;
 begin
   if not HasValue then
-    raise EInvalidOperationException.Create('Maybe Has No Value') at ReturnAddress;
+    raise System.SysUtils.EInvalidOpException.Create('Maybe Has No Value') at ReturnAddress;
   Result := fValue;
-end;
-
-function Maybe<T>.GetValueOrDefault(const defaultValue: T): T;
-begin
-  if HasValue then
-    Result := fValue
-  else
-    Result := defaultValue;
 end;
 
 class function Maybe<T>.EqualsComparer(const left, right: T): Boolean;
@@ -200,8 +117,11 @@ begin
 end;
 
 class function Maybe<T>.EqualsInternal(const left, right: T): Boolean;
+var
+  typeKind: TTypeKind;
 begin
-  case TType.Kind<T> of
+  typeKind := System.GetTypeKind(T);
+  case typeKind of
     tkInteger, tkEnumeration:
     begin
       case SizeOf(T) of
@@ -258,35 +178,18 @@ begin
   Result.fHasValue := Maybe.HasValue;
 end;
 
-{$IFDEF IMPLICIT_Maybe}
+{$IFDEF UNSECURE_MAYBE}
 class operator Maybe<T>.Implicit(const value: Maybe<T>): T;
 begin
   Result := value.Value;
 end;
 {$ENDIF}
 
-{$IFDEF UNSAFE_Maybe}
-class operator Maybe<T>.Implicit(const value: Maybe<T>): Variant;
-var
-  v: TValue;
-begin
-  if value.HasValue then
-  begin
-    v := TValue.From<T>(value.fValue);
-    if v.IsType<Boolean> then
-      Result := v.AsBoolean
-    else
-      Result := v.AsVariant;
-  end
-  else
-    Result := Null;
-end;
-
 class operator Maybe<T>.Implicit(const value: Variant): Maybe<T>;
 var
   v: TValue;
 begin
-  if not VarIsNullOrEmpty(value) then
+  if not IsNullOrEmpty(value) then
   begin
     v := TValue.FromVariant(value);
     Result.fValue := v.AsType<T>;
@@ -295,13 +198,12 @@ begin
   else
     Result := Default(Maybe<T>);
 end;
-{$ENDIF}
 
 class operator Maybe<T>.Explicit(const value: Variant): Maybe<T>;
 var
   v: TValue;
 begin
-  if not VarIsNullOrEmpty(value) then
+  if not isNullOrEmpty(value) then
   begin
     v := TValue.FromVariant(value);
     Result.fValue := v.AsType<T>;
@@ -316,7 +218,7 @@ begin
   Result := value.Value;
 end;
 
-class operator Maybe<T>.Implicit(const value: Maybe.Null): Maybe<T>;
+class operator Maybe<T>.Implicit(const value: Maybe.NoValue): Maybe<T>;
 begin
   Result.fValue := Default(T);
   Result.fHasValue := '';
@@ -336,7 +238,7 @@ begin
 end;
 
 class operator Maybe<T>.Equal(const left: Maybe<T>;
-  const right: Maybe.Null): Boolean;
+  const right: Maybe.NoValue): Boolean;
 begin
   Result := left.fHasValue = '';
 end;
@@ -347,7 +249,7 @@ begin
 end;
 
 class operator Maybe<T>.NotEqual(const left: Maybe<T>;
-  const right: Maybe.Null): Boolean;
+  const right: Maybe.NoValue): Boolean;
 begin
   Result := left.fHasValue <> '';
 end;
@@ -358,35 +260,6 @@ begin
   if left.fHasValue = '' then
     Exit(True);
   Result := not EqualsInternal(left.fValue, right);
-end;
-
-function Maybe<T>.ToString: string;
-var
-  v: TValue;
-begin
-  if HasValue then
-  begin
-    v := TValue.From<T>(fValue);
-    Result := v.ToString;
-  end
-  else
-    Result := 'Null';
-end;
-
-function Maybe<T>.ToVariant: Variant;
-var
-  v: TValue;
-begin
-  if HasValue then
-  begin
-    v := TValue.From<T>(fValue);
-    if v.IsType<Boolean> then
-      Result := v.AsBoolean
-    else
-      Result := v.AsVariant;
-  end
-  else
-    Result := Null;
 end;
 
 function Maybe<T>.TryGetValue(out value: T): Boolean;

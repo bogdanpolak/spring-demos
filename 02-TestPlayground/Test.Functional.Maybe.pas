@@ -3,8 +3,7 @@ unit Test.Functional.Maybe;
 interface
 
 uses
-  DUnitX.TestFramework,
-  Delphi.Functional;
+  DUnitX.TestFramework;
 
 type
   {$M+}
@@ -14,6 +13,10 @@ type
     // [Setup] procedure Setup;
     // [TearDown] procedure TearDown;
   published
+    procedure GetValue;
+    {$IFDEF UNSECURE_MAYBE}
+    procedure GetValueImplicit;
+    {$ENDIF}
     procedure HasValue;
     procedure AssignPrimitiveValues;
     procedure AssignRecords;
@@ -33,7 +36,9 @@ uses
   System.SysUtils,
   System.Classes,
   System.StrUtils,
-  System.Variants;
+  System.Variants,
+  {}
+  Delphi.Functional;
 
 // ----------------------------------------------------------------------------
 // TPoint2D record
@@ -61,6 +66,49 @@ end;
 // ----------------------------------------------------------------------------
 
 
+procedure TestFunctionalMaybe.GetValue;
+var
+  maybeEmptyString: Maybe<String>;
+  hasValue: Boolean;
+  sValue, sTryGet: String;
+begin
+  maybeEmptyString:= 'string';
+  sValue := maybeEmptyString.Value;
+  hasValue := maybeEmptyString.TryGetValue(sTryGet);
+
+  Assert.AreEqual('string',sValue);
+  Assert.IsTrue(hasValue);
+  Assert.AreEqual('string',sTryGet);
+end;
+
+{$IFDEF UNSECURE_MAYBE}
+procedure TestFunctionalMaybe.GetValueImplicit;
+var
+  maybeInteger99: Maybe<Integer>;
+  maybeCurrency111_99: Maybe<Currency>;
+  maybeSetReplaceFlags: Maybe<TReplaceFlags>;
+
+  integer99: Integer;
+  currency111_99: Currency;
+  setReplaceFlags: TReplaceFlags;
+  v: Variant;
+begin
+  maybeInteger99 := Maybe<Integer>.Create(99);
+  maybeCurrency111_99 := Maybe<Currency>.Create(111.99);
+  maybeSetReplaceFlags := Maybe<TReplaceFlags>.Create([rfIgnoreCase]);
+
+  integer99 := maybeInteger99;
+  currency111_99 := maybeCurrency111_99;
+  setReplaceFlags := maybeSetReplaceFlags;
+  v := maybeCurrency111_99;
+
+  Assert.AreEqual(99, integer99);
+  Assert.IsTrue([rfIgnoreCase] = setReplaceFlags);
+  Assert.AreEqual(111.99, currency111_99, 0.00001);
+  Assert.AreEqual(111.99, v, 0.00001);
+end;
+{$ENDIF}
+
 procedure TestFunctionalMaybe.HasValue;
 var
   maybeEmptyString: Maybe<String>;
@@ -75,7 +123,7 @@ var
   maybeIntegerNull: Maybe<Integer>;
   maybeCurrencyNull: Maybe<Currency>;
 begin
-  maybeCurrencyNull := Maybe<Currency>.Create(System.Variants.Null);
+  maybeCurrencyNull := System.Variants.Null;
   maybeIntegerNull := 11;
   maybeIntegerNull := nil;
 
@@ -95,7 +143,7 @@ begin
   variant111_99 := 111.99;
 
   maybeInteger99 := 99;
-  maybeCurrency111_99 := Maybe<Currency>.Create(variant111_99);
+  maybeCurrency111_99 := variant111_99;
   maybeSetEmpty := [];
   maybeSetIgnoreCase := [rfIgnoreCase];
   maybeCompareOption_StringSort := coStringSort;
