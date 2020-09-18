@@ -14,7 +14,7 @@ type
     // [TearDown] procedure TearDown;
   published
     procedure GetValue;
-    {$IFDEF IMPLICIT_MAYBE}
+    {$IFDEF UNSECURE_MAYBE}
     procedure GetValueImplicit;
     {$ENDIF}
     procedure HasValue;
@@ -81,7 +81,7 @@ begin
   Assert.AreEqual('string',sTryGet);
 end;
 
-{$IFDEF IMPLICIT_MAYBE}
+{$IFDEF UNSECURE_MAYBE}
 procedure TestFunctionalMaybe.GetValueImplicit;
 var
   maybeInteger99: Maybe<Integer>;
@@ -123,7 +123,7 @@ var
   maybeIntegerNull: Maybe<Integer>;
   maybeCurrencyNull: Maybe<Currency>;
 begin
-  maybeCurrencyNull := Maybe<Currency>.Create(System.Variants.Null);
+  maybeCurrencyNull := System.Variants.Null;
   maybeIntegerNull := 11;
   maybeIntegerNull := nil;
 
@@ -143,7 +143,7 @@ begin
   variant111_99 := 111.99;
 
   maybeInteger99 := 99;
-  maybeCurrency111_99 := Maybe<Currency>.Create(variant111_99);
+  maybeCurrency111_99 := variant111_99;
   maybeSetEmpty := [];
   maybeSetIgnoreCase := [rfIgnoreCase];
   maybeCompareOption_StringSort := coStringSort;
